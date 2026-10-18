@@ -106,3 +106,15 @@
   .test-nav-button, .test-navigation .button { width: 100%; justify-self: stretch; padding: 0 9px; font-size: 10px; }
   .test-navigation .button { gap: 8px; }
 }
+.test-review-list { max-width: 850px; display: grid; gap: 16px; margin: 24px auto; }
+.test-review-card { padding: clamp(20px,4vw,34px); border: 1px solid var(--line); border-radius: 9px; background: #fff; }
+.test-review-card h2 { margin: 20px 0; font: 500 clamp(19px,2.7vw,27px)/1.4 Georgia,serif; white-space: pre-wrap; }
+.review-correct-label { color: #47754b; font-weight: 700; letter-spacing: 0; }
+.review-incorrect-label { color: #a14640; font-weight: 700; letter-spacing: 0; }
+.review-answer { cursor: default; }
+.review-wrong-mark { margin-left: auto; color: #a14640; font-size: 11px; font-weight: 700; }
+.test-restart-button { display: flex; margin: 0 auto; cursor: pointer; }
+.profile-actions { display: flex; align-items: center; gap: 9px; }
+.logout-icon-button { display: grid; place-items: center; width: 34px; height: 34px; padding: 7px; border: 1px solid #dfe5dc; border-radius: 50%; background: #fff; color: #54705a; cursor: pointer; transition: .18s ease; }
+.logout-icon-button:hover { color: #a14640; border-color: #dba5a0; background: #fbf3f2; }
+.logout-icon-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }

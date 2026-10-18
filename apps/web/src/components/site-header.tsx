@@ -2,12 +2,22 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { getUser } from '@/lib/api';
 
 type SessionUser = { name?: string; avatarUrl?: string } | null;
 
 export default function SiteHeader() {
+  const router = useRouter();
   const [user, setUser] = useState<SessionUser>(null);
+
+  function logout() {
+    localStorage.removeItem('tilshunos_token');
+    localStorage.removeItem('tilshunos_user');
+    window.dispatchEvent(new Event('tilshunos:auth-change'));
+    setUser(null);
+    router.replace('/');
+  }
 
   useEffect(() => {
     const syncUser = () => setUser(getUser());
@@ -33,12 +43,17 @@ export default function SiteHeader() {
       </nav>
       <div className={`top-actions${user ? ' is-authenticated' : ''}`}>
         {user ? (
-          <Link className="profile-link" href="/profile" aria-label="Profilni tahrirlash" title="Profilni tahrirlash">
-            <span className="profile-avatar">
-              {user.avatarUrl && <img src={user.avatarUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
-              <span>{initials}</span>
-            </span>
-          </Link>
+          <div className="profile-actions">
+            <Link className="profile-link" href="/profile" aria-label="Profilni tahrirlash" title="Profilni tahrirlash">
+              <span className="profile-avatar">
+                {user.avatarUrl && <img src={user.avatarUrl} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
+                <span>{initials}</span>
+              </span>
+            </Link>
+            <button className="logout-icon-button" type="button" onClick={logout} aria-label="Profildan chiqish" title="Chiqish">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4m4-4H9" /></svg>
+            </button>
+          </div>
         ) : (
           <>
             <Link className="login-link" href="/login">Kirish</Link>

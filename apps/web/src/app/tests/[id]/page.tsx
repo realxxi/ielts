@@ -56,6 +56,41 @@ export default function TakeTest() {
   const answeredCount = questions.filter((item) => Boolean(answers[String(item.number)])).length;
   const currentResult: QuestionResult | undefined = result?.results?.find((item: QuestionResult) => item.number === question.number);
 
+  if (result) return (
+    <main className="page-shell test-taking-page">
+      <Link href="/tests" className="text-button">← Barcha testlar</Link>
+      <div className="test-heading">
+        <div className="eyebrow">TEST NATIJASI · {test.level}</div>
+        <h1 className="page-title">{test.title}</h1>
+      </div>
+      <div className="data-row test-result-summary">
+        <div><h2>Natijangiz: {result.score} / {result.total}</h2><p>{result.percentage}% to‘g‘ri javob</p></div>
+        <span className="badge">{result.percentage >= 80 ? 'Ajoyib natija!' : result.percentage >= 50 ? 'Yaxshi urinish!' : 'Yana bir bor urinib ko‘ring!'}</span>
+      </div>
+      <section className="test-review-list" aria-label="Barcha savollar natijasi">
+        {questions.map((item) => {
+          const review: QuestionResult | undefined = result.results?.find((entry: QuestionResult) => entry.number === item.number);
+          return <article className="test-review-card" key={item.number}>
+            <div className="test-question-meta"><span>SAVOL {item.number}</span><span className={review?.correct ? 'review-correct-label' : 'review-incorrect-label'}>{review?.correct ? 'To‘g‘ri ✓' : `Noto‘g‘ri · To‘g‘ri javob: ${review?.correctAnswer}`}</span></div>
+            <h2>{item.question}</h2>
+            <div className="test-answer-list">
+              {Object.entries(item.options).map(([letter, label]) => {
+                const correct = review?.correctAnswer === letter;
+                const selectedWrong = review?.selected === letter && !review?.correct;
+                return <div key={letter} className={`test-answer review-answer${correct ? ' is-correct' : ''}${selectedWrong ? ' is-incorrect' : ''}`}>
+                  <span className="test-answer-letter">{letter}</span><span>{label}</span>
+                  {correct && <span className="answer-mark">To‘g‘ri javob ✓</span>}
+                  {selectedWrong && <span className="review-wrong-mark">Sizning javobingiz</span>}
+                </div>;
+              })}
+            </div>
+          </article>;
+        })}
+      </section>
+      <button type="button" className="button test-restart-button" onClick={() => { setResult(null); setAnswers({}); setActiveIndex(0); setError(''); }}>Testni qayta ishlash <span>↻</span></button>
+    </main>
+  );
+
   return (
     <main className="page-shell test-taking-page">
       <Link href="/tests" className="text-button">← Barcha testlar</Link>
