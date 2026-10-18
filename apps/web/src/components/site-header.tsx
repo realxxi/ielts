@@ -28,7 +28,7 @@ export default function SiteHeader() {
       <nav>
         <Link href="/courses">Kurslar</Link>
         <Link href="/tests">Testlar</Link>
-        <Link href="/#how">Qanday ishlaydi</Link>
+        {!user && <Link href="/#how">Qanday ishlaydi</Link>}
         <Link href="/dashboard">Kabinet</Link>
       </nav>
       <div className={`top-actions${user ? ' is-authenticated' : ''}`}>

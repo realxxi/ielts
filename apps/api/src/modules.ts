@@ -12,7 +12,7 @@ import * as bcrypt from 'bcryptjs';
 import { createHmac, timingSafeEqual, createHash } from 'crypto';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { IsEmail, IsIn, IsOptional, IsString, MinLength, IsBoolean, IsArray, ValidateNested, IsNumber, Min, IsMongoId } from 'class-validator';
+import { IsEmail, IsIn, IsOptional, IsString, MinLength, IsBoolean, IsArray, ValidateNested, IsNumber, IsInt, Min, IsMongoId, ArrayMinSize } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export type Role = 'student' | 'teacher' | 'admin';
@@ -56,6 +56,9 @@ export class TelegramDto { @IsNumber() id: number; @IsNumber() auth_date: number
 export class LessonDto { @IsString() title: string; @IsString() @IsOptional() content?: string; @IsString() @IsOptional() videoUrl?: string; }
 export class SectionDto { @IsString() title: string; @IsArray() @ValidateNested({ each: true }) @Type(() => LessonDto) lessons: LessonDto[]; }
 export class CourseDto { @IsString() title: string; @IsString() description: string; @IsString() @IsOptional() coverUrl?: string; @IsBoolean() isPaid: boolean; @IsNumber() @Min(0) @IsOptional() price?: number; @IsArray() @ValidateNested({ each: true }) @Type(() => SectionDto) sections: SectionDto[]; }
+export class TestOptionsDto { @IsString() @MinLength(1) A: string; @IsString() @MinLength(1) B: string; @IsString() @MinLength(1) C: string; @IsString() @MinLength(1) D: string; }
+export class TestQuestionDto { @IsInt() @Min(1) number: number; @IsString() @MinLength(1) question: string; @ValidateNested() @Type(() => TestOptionsDto) options: TestOptionsDto; @IsIn(['A','B','C','D']) answer: string; }
+export class CreateTestDto { @IsString() @MinLength(2) title: string; @IsIn(['A1','A2','B1','B2','C1','C2']) level: string; @IsArray() @ArrayMinSize(1) @ValidateNested({ each: true }) @Type(() => TestQuestionDto) questions: TestQuestionDto[]; }
 export class ReviewDto { @IsIn(['approved','rejected','hidden']) status: string; }
 export class AccessReviewDto { @IsIn(['approved','rejected']) status: string; }
 export class ProgressDto { @IsArray() completedLessons: string[]; }
@@ -119,6 +122,8 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
 @ApiTags('tests') @Controller('tests') export class TestsController {
  constructor(@InjectModel(LanguageTest.name) private tests:Model<LanguageTest>,@InjectModel(TestAttempt.name) private attempts:Model<TestAttempt>){}
  @Get() list(){return this.tests.find({published:true},{title:1,level:1,'questions.number':1}).lean().then(rows=>rows.map((t:any)=>({...t,questionCount:t.questions?.length||0,questions:undefined})));}
+ @Get('mine') @UseGuards(JwtAuth) @ApiBearerAuth() async mine(@Req() req:any){if(req.user?.role!=='teacher'&&req.user?.role!=='admin')throw new ForbiddenException();return this.tests.find(req.user.role==='admin'?{}:{createdBy:req.user.id},{title:1,level:1,'questions.number':1,createdAt:1}).sort({createdAt:-1}).lean().then(rows=>rows.map((t:any)=>({...t,questionCount:t.questions?.length||0,questions:undefined})));}
+ @Post() @UseGuards(JwtAuth) @ApiBearerAuth() async create(@Req() req:any,@Body() dto:CreateTestDto){if(req.user?.role!=='teacher')throw new ForbiddenException();const numbers=dto.questions.map(q=>q.number);if(new Set(numbers).size!==numbers.length)throw new BadRequestException('Savol raqamlari takrorlanmasligi kerak');return this.tests.create({...dto,createdBy:req.user.id,published:true});}
  @Get('manage') @UseGuards(JwtAuth) @ApiBearerAuth() async manage(@Req() req:any){if(req.user?.role!=='admin')throw new ForbiddenException();return this.tests.find({}, {title:1,level:1,'questions.number':1,createdAt:1}).sort({level:1}).lean().then(rows=>rows.map((t:any)=>({...t,questionCount:t.questions?.length||0,questions:undefined})));}
  @Get(':id') async detail(@Param('id') id:string){const test:any=await this.tests.findOne({_id:id,published:true}).lean();if(!test)throw new NotFoundException();return{_id:test._id,title:test.title,level:test.level,questions:test.questions.map((q:any)=>({number:q.number,question:q.question,options:q.options}))};}
  @Post(':id/submit') async submit(@Param('id') id:string,@Req() req:any,@Body('answers') answers:Record<string,string>){const test:any=await this.tests.findOne({_id:id,published:true}).lean();if(!test)throw new NotFoundException();if(!answers||typeof answers!=='object'||Array.isArray(answers))throw new BadRequestException('Javoblarni yuboring');for(const [key,value] of Object.entries(answers)){if(!test.questions.some((q:any)=>String(q.number)===key)||!['A','B','C','D'].includes(value))throw new BadRequestException('Javob formati noto‘g‘ri');}const score=test.questions.filter((q:any)=>answers[String(q.number)]===q.answer).length;if(req.user&&['student','admin'].includes(req.user.role))await this.attempts.create({testId:id,userId:req.user.id,score,total:test.questions.length,answers});return{score,total:test.questions.length,percentage:Math.round(score*100/test.questions.length),results:test.questions.map((q:any)=>({number:q.number,selected:answers[String(q.number)]||null,correctAnswer:q.answer,correct:answers[String(q.number)]===q.answer}))};}
