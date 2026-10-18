@@ -125,4 +125,8 @@
 .course-card:focus-within { outline: 2px solid #6f9863; outline-offset: 3px; }
 .presentation-frame { display:block; width:100%; height:calc(100vh - 110px); min-height:600px; border:1px solid var(--line); border-radius:8px; background:#fff; }
 .course-slides { display:grid; gap:8px; margin:18px 0; }
-.course-slide-link { display:flex; justify-content:space-between; padding:13px 16px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--green); font-size:13px; }
+.course-slide-link { width:100%; text-align:left; cursor:pointer; display:flex; justify-content:space-between; padding:13px 16px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--green); font-size:13px; }
+
+.presentation-viewer { margin:24px 0; }
+.presentation-viewer .dashboard-header { margin-bottom:12px; }
+.presentation-viewer h2 { font:500 22px Georgia,serif; }
