@@ -41,4 +41,4 @@ services:
       - key: NEXT_PUBLIC_API_URL
         value: https://tilshunos-api-4dj7.onrender.com/api
       - key: NEXT_PUBLIC_TELEGRAM_BOT_NAME
-        value: BOT_USERNAME_SHU_YERGA
+        value: Authlogin1122bot
