@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: tilshunos-api
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build --workspace @tilshunos/api
+    startCommand: npm run start --workspace @tilshunos/api
+    healthCheckPath: /api/tests
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: WEB_ORIGIN
+        value: https://tilshunos-web.onrender.com
+
+  - type: web
+    name: tilshunos-web
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build --workspace @tilshunos/web
+    startCommand: npm run start --workspace @tilshunos/web
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://tilshunos-api.onrender.com/api
+      - key: NEXT_PUBLIC_TELEGRAM_BOT_NAME
+        sync: false
