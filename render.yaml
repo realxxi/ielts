@@ -1,12 +1,11 @@
 services:
   - type: web
-    name: tilshunos-api
+    name: tilshunos-api-4dj7
     runtime: node
     plan: free
     rootDir: .
     buildCommand: npm ci --include=dev && npm run build --workspace @tilshunos/api
     startCommand: npm run start --workspace @tilshunos/api
-    healthCheckPath: /api/tests
     envVars:
       - key: NODE_VERSION
         value: "20"
@@ -23,10 +22,10 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         sync: false
       - key: WEB_ORIGIN
-        value: https://tilshunos-web.onrender.com
+        value: https://tilshunos-web-4dj7.onrender.com
 
   - type: web
-    name: tilshunos-web
+    name: tilshunos-web-4dj7
     runtime: node
     plan: free
     rootDir: .
@@ -40,6 +39,6 @@ services:
       - key: NODE_OPTIONS
         value: --max-old-space-size=460
       - key: NEXT_PUBLIC_API_URL
-        value: https://tilshunos-api.onrender.com/api
+        value: https://tilshunos-api-4dj7.onrender.com/api
       - key: NEXT_PUBLIC_TELEGRAM_BOT_NAME
-        sync: false
+        value: BOT_USERNAME_SHU_YERGA
