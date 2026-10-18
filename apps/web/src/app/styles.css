@@ -118,3 +118,11 @@
 .logout-icon-button { display: grid; place-items: center; width: 34px; height: 34px; padding: 7px; border: 1px solid #dfe5dc; border-radius: 50%; background: #fff; color: #54705a; cursor: pointer; transition: .18s ease; }
 .logout-icon-button:hover { color: #a14640; border-color: #dba5a0; background: #fbf3f2; }
 .logout-icon-button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+.course-card { position: relative; cursor: pointer; }
+.course-card .course-footer>a { position: static; }
+.course-card .course-footer>a::after { content: ""; position: absolute; inset: 0; z-index: 4; border-radius: inherit; }
+.course-card:focus-within { outline: 2px solid #6f9863; outline-offset: 3px; }
+.presentation-frame { display:block; width:100%; height:calc(100vh - 110px); min-height:600px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+.course-slides { display:grid; gap:8px; margin:18px 0; }
+.course-slide-link { display:flex; justify-content:space-between; padding:13px 16px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--green); font-size:13px; }

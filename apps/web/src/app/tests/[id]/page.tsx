@@ -23,14 +23,6 @@ export default function TakeTest() {
   }, [id]);
 
   async function submit() {
-    const unansweredIndex = test.questions.findIndex((question: Question) => !answers[String(question.number)]);
-    if (unansweredIndex !== -1) {
-      setActiveIndex(unansweredIndex);
-      setShowQuestionGrid(true);
-      setError('Testni yakunlashdan oldin barcha savollarga javob bering. Belgilanmagan savollar raqamlari ro‘yxatda ko‘rsatilgan.');
-      return;
-    }
-
     setBusy(true);
     setError('');
     try {
