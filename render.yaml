@@ -3,10 +3,13 @@ services:
     name: tilshunos-api
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build --workspace @tilshunos/api
+    rootDir: .
+    buildCommand: npm ci --include=dev && npm run build --workspace @tilshunos/api
     startCommand: npm run start --workspace @tilshunos/api
     healthCheckPath: /api/tests
     envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: NODE_ENV
         value: production
       - key: JWT_SECRET
@@ -26,11 +29,16 @@ services:
     name: tilshunos-web
     runtime: node
     plan: free
-    buildCommand: npm ci && npm run build --workspace @tilshunos/web
+    rootDir: .
+    buildCommand: npm ci --include=dev && npm run build --workspace @tilshunos/web
     startCommand: npm run start --workspace @tilshunos/web
     envVars:
+      - key: NODE_VERSION
+        value: "20"
       - key: NODE_ENV
         value: production
+      - key: NODE_OPTIONS
+        value: --max-old-space-size=460
       - key: NEXT_PUBLIC_API_URL
         value: https://tilshunos-api.onrender.com/api
       - key: NEXT_PUBLIC_TELEGRAM_BOT_NAME
