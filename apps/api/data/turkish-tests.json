@@ -1,0 +1,1404 @@
+{
+  "tests": [
+    {
+      "level": "A1",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Ben her sabah saat yedide ___.",
+          "options": {
+            "A": "kalkıyorum",
+            "B": "kalkıyorsun",
+            "C": "kalkıyorlar",
+            "D": "kalkıyorsunuz"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 2,
+          "question": "Ahmet ve Mehmet öğrenci ___.",
+          "options": {
+            "A": "im",
+            "B": "sin",
+            "C": "yiz",
+            "D": "ler"
+          },
+          "answer": "D"
+        },
+        {
+          "number": 3,
+          "question": "Benim iki kardeşim var. Birisi erkek, diğeri ___.",
+          "options": {
+            "A": "kadın",
+            "B": "kız",
+            "C": "anne",
+            "D": "baba"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 4,
+          "question": "Sen dün okula ___?",
+          "options": {
+            "A": "gidiyorsun",
+            "B": "gideceksin",
+            "C": "gittin mi",
+            "D": "gidiyorum"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 5,
+          "question": "Masanın üzerinde ___ kitap var.",
+          "options": {
+            "A": "bir",
+            "B": "ben",
+            "C": "çoklar",
+            "D": "onlar"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 6,
+          "question": "Ben Türkçe öğreniyorum, ama henüz çok iyi ___.",
+          "options": {
+            "A": "konuşuyorum",
+            "B": "konuşamıyorum",
+            "C": "konuşuyorsun",
+            "D": "konuşuyorlar"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 7,
+          "question": "Bu kalem benim değil, ___ kalemi.",
+          "options": {
+            "A": "sen",
+            "B": "senin",
+            "C": "seni",
+            "D": "senden"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 8,
+          "question": "Annem mutfakta yemek ___.",
+          "options": {
+            "A": "yapıyorum",
+            "B": "yapıyorsun",
+            "C": "yapıyor",
+            "D": "yapıyoruz"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 9,
+          "question": "Biz hafta sonları genellikle evde ___.",
+          "options": {
+            "A": "dinleniyorum",
+            "B": "dinleniyorsun",
+            "C": "dinleniyoruz",
+            "D": "dinleniyor"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 10,
+          "question": "Bugün hava soğuk, bu yüzden montumu ___.",
+          "options": {
+            "A": "giyiyorum",
+            "B": "içiyorum",
+            "C": "okuyorum",
+            "D": "yazıyorum"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 11,
+          "question": "Ben her gün ___ gidiyorum.",
+          "options": {
+            "A": "okul",
+            "B": "okula",
+            "C": "okuldan",
+            "D": "okulun"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 12,
+          "question": "Kitap ___ masanın üzerinde.",
+          "options": {
+            "A": "-ta",
+            "B": "-dan",
+            "C": "-ı",
+            "D": "-ın"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 13,
+          "question": "Ben Özbekistan'___ geliyorum.",
+          "options": {
+            "A": "-a",
+            "B": "-da",
+            "C": "-dan",
+            "D": "-ın"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 14,
+          "question": "Annem ___ telefon ediyorum.",
+          "options": {
+            "A": "annem",
+            "B": "anneme",
+            "C": "annemi",
+            "D": "annemden"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 15,
+          "question": "Öğrenci sınıf___ oturuyor.",
+          "options": {
+            "A": "-da",
+            "B": "-dan",
+            "C": "-a",
+            "D": "-ın"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 16,
+          "question": "“Pahalı” so‘zining antonimi qaysi?",
+          "options": {
+            "A": "Güzel",
+            "B": "Ucuz",
+            "C": "Büyük",
+            "D": "Uzun"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 17,
+          "question": "“Karnım aç.” jumlasining ma’nosi nima?",
+          "options": {
+            "A": "Qornim to‘q.",
+            "B": "Qornim och.",
+            "C": "Chanqadim.",
+            "D": "Charchadim."
+          },
+          "answer": "B"
+        },
+        {
+          "number": 18,
+          "question": "“Geçmiş olsun.” iborasi odatda qachon ishlatiladi?",
+          "options": {
+            "A": "Birov kasal bo‘lganda",
+            "B": "Birov bilan tanishganda",
+            "C": "Xayrlashayotganda",
+            "D": "Ovqatlanishdan oldin"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 19,
+          "question": "“Hafta içi” nimani anglatadi?",
+          "options": {
+            "A": "Dam olish kunlari",
+            "B": "Hafta kunlari, ish kunlari",
+            "C": "Keyingi hafta",
+            "D": "O‘tgan hafta"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 20,
+          "question": "“Alışveriş yapmak” ma’nosi qaysi?",
+          "options": {
+            "A": "Sayohat qilish",
+            "B": "Kitob o‘qish",
+            "C": "Xarid qilish",
+            "D": "Ishlash"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 21,
+          "question": "— Saat kaç?\n— Saat dokuzu çeyrek geçiyor.\nSoat necha?",
+          "options": {
+            "A": "08:45",
+            "B": "09:15",
+            "C": "09:30",
+            "D": "10:15"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 22,
+          "question": "— Nerede yaşıyorsun?\n— ___.",
+          "options": {
+            "A": "Yirmi yaşındayım.",
+            "B": "Taşkent'te yaşıyorum.",
+            "C": "Öğrenciyim.",
+            "D": "Türkçe öğreniyorum."
+          },
+          "answer": "B"
+        },
+        {
+          "number": 23,
+          "question": "— Ne yapmak istiyorsun?\n— ___.",
+          "options": {
+            "A": "Kitap okumak istiyorum.",
+            "B": "Dün okula gittim.",
+            "C": "Saat sekiz.",
+            "D": "Ben Özbekistanlıyım."
+          },
+          "answer": "A"
+        },
+        {
+          "number": 24,
+          "question": "Matnni o‘qing:\nAli her sabah saat yedide kalkıyor. Kahvaltı yaptıktan sonra üniversiteye gidiyor. Öğleden sonra kütüphanede ders çalışıyor. Akşam saat altıda eve dönüyor.\nAli tushdan keyin nima qiladi?",
+          "options": {
+            "A": "Uyquga yotadi.",
+            "B": "Do‘konga boradi.",
+            "C": "Kutubxonada dars qiladi.",
+            "D": "Universitetga birinchi marta boradi."
+          },
+          "answer": "C"
+        },
+        {
+          "number": 25,
+          "question": "Matnni o‘qing:\nZeynep hafta sonu ailesiyle birlikte parka gidiyor. Parkta yürüyüş yapıyor ve arkadaşlarıyla sohbet ediyor. Akşam eve dönüp kitap okuyor.\nZeynep kechqurun nima qiladi?",
+          "options": {
+            "A": "Universitetga boradi.",
+            "B": "Kitob o‘qiydi.",
+            "C": "Ishlaydi.",
+            "D": "Do‘stlari bilan kinoga boradi."
+          },
+          "answer": "B"
+        }
+      ]
+    },
+    {
+      "level": "A2",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Dün akşam arkadaşlarımla sinemaya _.",
+          "options": {
+            "A": "gidiyorum",
+            "B": "gittim",
+            "C": "gideceğim",
+            "D": "giderim"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 2,
+          "question": "Ben her sabah saat yedide _.",
+          "options": {
+            "A": "kalkıyorum",
+            "B": "kalktım",
+            "C": "kalkacağım",
+            "D": "kalkmışım"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 3,
+          "question": "Yarın hava güzel olursa parka _.",
+          "options": {
+            "A": "gittim",
+            "B": "gidiyorum",
+            "C": "gideceğim",
+            "D": "gitmişim"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 4,
+          "question": "Annem yemek _, ben de sofrayı hazırlıyorum.",
+          "options": {
+            "A": "pişiriyor",
+            "B": "pişirdim",
+            "C": "pişirecek",
+            "D": "pişirmiş"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 5,
+          "question": "Bu kitap, okuduğum _ kitaplardan biri.",
+          "options": {
+            "A": "güzel",
+            "B": "daha güzel",
+            "C": "en güzel",
+            "D": "güzellik"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 6,
+          "question": "Ali benden _ koşuyor.",
+          "options": {
+            "A": "hızlı",
+            "B": "daha hızlı",
+            "C": "en hızlı",
+            "D": "hızla"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 7,
+          "question": "Türkçe öğrenmek _ için her gün çalışıyorum.",
+          "options": {
+            "A": "öğreniyorum",
+            "B": "öğrendim",
+            "C": "öğrenmek",
+            "D": "öğrensin"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 8,
+          "question": "Evden çıkmadan önce kapıyı _.",
+          "options": {
+            "A": "kilitledim",
+            "B": "kilitleyeceğim",
+            "C": "kilitliyorum",
+            "D": "kilitlemek"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 9,
+          "question": "— Nasılsın?\n— _, teşekkür ederim.",
+          "options": {
+            "A": "Saat üçte",
+            "B": "İyiyim",
+            "C": "Evdeyim",
+            "D": "Yirmi yaşındayım"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 10,
+          "question": "— Hafta sonu ne yapacaksın?\n— Arkadaşlarımla buluşup kahve _.",
+          "options": {
+            "A": "içtim",
+            "B": "içiyorum",
+            "C": "içeceğim",
+            "D": "içmişim"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 11,
+          "question": "— Bu gömleği nereden aldın?\n— _ aldım.",
+          "options": {
+            "A": "Dün",
+            "B": "Mağazadan",
+            "C": "Arkadaşıma",
+            "D": "Saat beşte"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 12,
+          "question": "— Saat kaçta işe başlıyorsun?\n— Sabah saat dokuzda _.",
+          "options": {
+            "A": "başladım",
+            "B": "başlayacağım",
+            "C": "başlıyorum",
+            "D": "başlamışım"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 13,
+          "question": "— Geçmiş olsun! Neren ağrıyor?\n— Başım _.",
+          "options": {
+            "A": "ağrıyor",
+            "B": "ağrıdıktan",
+            "C": "ağrıyacak",
+            "D": "ağrımak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 14,
+          "question": "“Ucuz” kelimesinin zıt anlamı hangisidir?",
+          "options": {
+            "A": "Kolay",
+            "B": "Pahalı",
+            "C": "Güzel",
+            "D": "Yakın"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 15,
+          "question": "“Yorgun” kelimesinin anlamı nedir?",
+          "options": {
+            "A": "Charchagan",
+            "B": "Xursand",
+            "C": "Och",
+            "D": "Chanqagan"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 16,
+          "question": "“Randevu almak” ne demektir?",
+          "options": {
+            "A": "Pul to‘lamoq",
+            "B": "Dam olmoq",
+            "C": "Uchrashuv vaqtini belgilamoq",
+            "D": "Yo‘lga chiqmoq"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 17,
+          "question": "Kışın hava genellikle _ olur.",
+          "options": {
+            "A": "sıcak",
+            "B": "soğuk",
+            "C": "serin",
+            "D": "güneşli"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 18,
+          "question": "Otobüsü kaçırdım çünkü durağa geç _.",
+          "options": {
+            "A": "kaldım",
+            "B": "geldim",
+            "C": "oldum",
+            "D": "yaptım"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 19,
+          "question": "Ben her gün Türkçe _ çalışıyorum.",
+          "options": {
+            "A": "öğrenmek için",
+            "B": "öğreniyorum için",
+            "C": "öğrendim için",
+            "D": "öğrenir için"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 20,
+          "question": "Kardeşim dün bana bir hediye _.",
+          "options": {
+            "A": "alacak",
+            "B": "alıyor",
+            "C": "aldı",
+            "D": "alır"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 21,
+          "question": "Masanın _ iki kitap var.",
+          "options": {
+            "A": "altında",
+            "B": "altına",
+            "C": "altından",
+            "D": "altını"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 22,
+          "question": "Benim arabam yok, bu yüzden işe otobüsle _.",
+          "options": {
+            "A": "gidiyorum",
+            "B": "gittim mi",
+            "C": "gidecek",
+            "D": "gitmek"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 23,
+          "question": "Eğer zamanım olursa seni _.",
+          "options": {
+            "A": "aradım",
+            "B": "arıyorum dün",
+            "C": "arayacağım",
+            "D": "aramış"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 24,
+          "question": "Matnni o‘qing:\nMehmet, İstanbul'da yaşayan yirmi dört yaşında bir öğrencidir. Her sabah saat yedide uyanır ve kahvaltı yaptıktan sonra üniversiteye gider. Dersleri saat dokuzda başlar ve öğleden sonra üçte biter. Mehmet boş zamanlarında kitap okumayı ve arkadaşlarıyla futbol oynamayı sever. Geçen hafta sonu ailesini ziyaret etmek için Ankara'ya gitti.\n\nMehmet üniversiteye gitmeden önce ne yapıyor?",
+          "options": {
+            "A": "Futbol oynuyor.",
+            "B": "Kahvaltı yapıyor.",
+            "C": "Ailesini ziyaret ediyor.",
+            "D": "Kitap satın alıyor."
+          },
+          "answer": "B"
+        },
+        {
+          "number": 25,
+          "question": "Mehmet geçen hafta sonu nereye gitti?",
+          "options": {
+            "A": "İzmir'e",
+            "B": "Bursa'ya",
+            "C": "Ankara'ya",
+            "D": "Antalya'ya"
+          },
+          "answer": "C"
+        }
+      ]
+    },
+    {
+      "level": "B1",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Eğer dün erken uyusaydım, sabah işe geç kalmazdım. Bu cümlede hangi anlam vardır?",
+          "options": {
+            "A": "Şart",
+            "B": "Amaç",
+            "C": "Karşılaştırma",
+            "D": "Neden-sonuç"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 2,
+          "question": "Ben çocukken her yaz dedemlerin köyüne _.",
+          "options": {
+            "A": "gidiyorum",
+            "B": "gideceğim",
+            "C": "giderdim",
+            "D": "gitmişim"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 3,
+          "question": "Sınavı kazanabilmek için çok _ gerekiyor.",
+          "options": {
+            "A": "çalışmak",
+            "B": "çalıştım",
+            "C": "çalışıyorum",
+            "D": "çalışmış"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 4,
+          "question": "Yağmur yağdığı için dışarı _.",
+          "options": {
+            "A": "çıkacağız",
+            "B": "çıkmadık",
+            "C": "çıkıyoruz",
+            "D": "çıkmışız"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 5,
+          "question": "Bu filmi daha önce _ ama sonunu hatırlamıyorum.",
+          "options": {
+            "A": "izliyorum",
+            "B": "izleyeceğim",
+            "C": "izlemişim",
+            "D": "izledim"
+          },
+          "answer": "D"
+        },
+        {
+          "number": 6,
+          "question": "Türkçe öğrenmeye başlayalı üç ay _.",
+          "options": {
+            "A": "önce",
+            "B": "sonra",
+            "C": "oldu",
+            "D": "kadar"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 7,
+          "question": "Bana yardım _ çok mutlu olurum.",
+          "options": {
+            "A": "edersen",
+            "B": "ediyorsun",
+            "C": "ettin",
+            "D": "edeceksin"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 8,
+          "question": "Ne kadar çok kitap okursan o kadar fazla kelime _.",
+          "options": {
+            "A": "öğrendin",
+            "B": "öğrenirsin",
+            "C": "öğrenmişsin",
+            "D": "öğreniyordun"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 9,
+          "question": "Dün akşam eve geldiğimde annem yemek _.",
+          "options": {
+            "A": "pişirecek",
+            "B": "pişirmiş",
+            "C": "pişiriyordu",
+            "D": "pişirir"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 10,
+          "question": "Bu işi tek başıma yapamam, bana yardım _ gerekiyor.",
+          "options": {
+            "A": "etmek",
+            "B": "ettim",
+            "C": "ediyorum",
+            "D": "etmiş"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 11,
+          "question": "“Karar vermek” ifadesinin Özbekçe karşılığı hangisidir?",
+          "options": {
+            "A": "Maslahat bermoq",
+            "B": "Qaror qabul qilmoq",
+            "C": "Fikr bildirmoq",
+            "D": "Yordam so‘ramoq"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 12,
+          "question": "Otobüsü kaçırdığım için toplantıya _ kaldım.",
+          "options": {
+            "A": "erken",
+            "B": "hazır",
+            "C": "geç",
+            "D": "kolay"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 13,
+          "question": "Doktor, hastalığın daha hızlı iyileşmesi için bol bol dinlenmemi _.",
+          "options": {
+            "A": "önerdi",
+            "B": "reddetti",
+            "C": "unuttu",
+            "D": "kaybetti"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 14,
+          "question": "“Fırsat” kelimesinin anlamı hangisidir?",
+          "options": {
+            "A": "Muammo",
+            "B": "Imkoniyat",
+            "C": "Majburiyat",
+            "D": "Xavf"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 15,
+          "question": "Paramı evde unuttum. Bu yüzden alışveriş _.",
+          "options": {
+            "A": "yapabildim",
+            "B": "yapamam",
+            "C": "yapamadım",
+            "D": "yapacağım"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 16,
+          "question": "Arkadaşım bana çok önemli bir sır verdi. Ben de bu sırrı kimseye _.",
+          "options": {
+            "A": "anlatmadım",
+            "B": "anlatacağım mı",
+            "C": "anlatıyorum dün",
+            "D": "anlatmak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 17,
+          "question": "Hava çok soğuk olmasına rağmen dışarı _.",
+          "options": {
+            "A": "çıkmadık",
+            "B": "çıkacağız çünkü",
+            "C": "çıktığımız için",
+            "D": "çıkmak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 18,
+          "question": "Bir işi zamanında bitirmek için iyi bir _ yapmak gerekir.",
+          "options": {
+            "A": "tesadüf",
+            "B": "plan",
+            "C": "alışkanlık",
+            "D": "tartışma"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 19,
+          "question": "Mehmet, sınavdan yüksek not almak için her gün düzenli olarak _.",
+          "options": {
+            "A": "çalışıyor",
+            "B": "çalıştı mı",
+            "C": "çalışacak dün",
+            "D": "çalışmıştı ama"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 20,
+          "question": "Eğer hafta sonu hava güzel olursa arkadaşlarımla pikniğe _.",
+          "options": {
+            "A": "gittim",
+            "B": "gidiyordum",
+            "C": "gideceğim",
+            "D": "gitmişim"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 21,
+          "question": "Ayşe çok yorgundu. _, ödevini bitirmeden uyumadı.",
+          "options": {
+            "A": "Çünkü",
+            "B": "Buna rağmen",
+            "C": "Bu yüzden",
+            "D": "Örneğin"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 22,
+          "question": "Metin: Mehmet'in Yeni Hayatı\nMehmet, üniversite eğitimini tamamladıktan sonra İstanbul'da bir şirkette çalışmaya başladı. İlk zamanlarda yeni işine alışmakta zorlandı. Çünkü hem iş arkadaşlarını tanımıyor hem de yaptığı işlerin sorumluluğunu tam olarak bilmiyordu.\nAncak Mehmet pes etmedi. Her gün işini daha iyi öğrenmek için çaba gösterdi. Deneyimli arkadaşlarından tavsiyeler aldı ve boş zamanlarında mesleğiyle ilgili kitaplar okudu.\nAltı ay sonra Mehmet işine daha fazla alıştı ve yöneticisi onun çalışmalarından memnun kaldı. Mehmet, başarılı olmanın yalnızca bilgi sahibi olmakla değil, aynı zamanda sabırlı ve çalışkan olmakla da ilgili olduğunu anladı.\n\nMehmet ne zaman çalışmaya başladı?",
+          "options": {
+            "A": "Üniversiteye başlamadan önce",
+            "B": "Üniversite eğitimini tamamladıktan sonra",
+            "C": "Altı ay tatil yaptıktan sonra",
+            "D": "İstanbul'a gelmeden önce"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 23,
+          "question": "Mehmet ilk zamanlarda neden zorlandı?",
+          "options": {
+            "A": "Maaşı çok düşük olduğu için",
+            "B": "İşini hiç sevmediği için",
+            "C": "Yeni işine ve sorumluluklarına alışamadığı için",
+            "D": "Üniversiteye geri dönmek istediği için"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 24,
+          "question": "Mehmet işini daha iyi öğrenmek için ne yaptı?",
+          "options": {
+            "A": "İşten ayrıldı.",
+            "B": "Yalnızca tatil yaptı.",
+            "C": "Arkadaşlarının tavsiyelerini dinledi ve kitap okudu.",
+            "D": "Başka bir şehre taşındı."
+          },
+          "answer": "C"
+        },
+        {
+          "number": 25,
+          "question": "Metne göre Mehmet'in öğrendiği en önemli şey nedir?",
+          "options": {
+            "A": "Başarılı olmak için yalnızca para kazanmak gerekir.",
+            "B": "İş hayatında arkadaş edinmek gereksizdir.",
+            "C": "Başarı için bilgi, sabır ve çalışkanlık önemlidir.",
+            "D": "Üniversite eğitimi iş hayatında hiçbir işe yaramaz."
+          },
+          "answer": "C"
+        }
+      ]
+    },
+    {
+      "level": "C1",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Eğer daha dikkatli __, bu hatayı yapmazdın.",
+          "options": {
+            "A": "olursan",
+            "B": "olsaydın",
+            "C": "olacaksın",
+            "D": "olmalısın"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 2,
+          "question": "Toplantıya geç kalmasına rağmen, müdür onu affetmeyi __.",
+          "options": {
+            "A": "başardı",
+            "B": "reddetti",
+            "C": "tercih etti",
+            "D": "ihmal etti"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 3,
+          "question": "Bu kitabı daha önce __ olsaydım, sınavda daha başarılı olurdum.",
+          "options": {
+            "A": "okudum",
+            "B": "okuyorum",
+            "C": "okumuş",
+            "D": "okuyacağım"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 4,
+          "question": "Hava çok soğuk __ dışarı çıkmak zorunda kaldık.",
+          "options": {
+            "A": "olduğu hâlde",
+            "B": "olmasına rağmen",
+            "C": "olmasına karşın",
+            "D": "olmasına rağmen de"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 5,
+          "question": "Bana gerçeği __, sana daha fazla güvenebilirdim.",
+          "options": {
+            "A": "söylersen",
+            "B": "söylemişsin",
+            "C": "söyleseydin",
+            "D": "söyleyeceksin"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 6,
+          "question": "Öğrencilerin büyük bir kısmı sınavı __ geçti.",
+          "options": {
+            "A": "başarıyla",
+            "B": "başarılı",
+            "C": "başarısızlıkla",
+            "D": "başarısınca"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 7,
+          "question": "Bu konuyu anlamakta __ çekiyorum.",
+          "options": {
+            "A": "zorluk",
+            "B": "zor",
+            "C": "zorlanmak",
+            "D": "zorluyor"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 8,
+          "question": "Ne kadar çalışırsan çalış, bu sınavı geçmek o kadar kolay __.",
+          "options": {
+            "A": "değildir",
+            "B": "olmayacak mı",
+            "C": "olmuştur",
+            "D": "olsaydı"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 9,
+          "question": "Müdür, çalışanlardan raporlarını bugün teslim etmelerini __.",
+          "options": {
+            "A": "istedi",
+            "B": "istendi",
+            "C": "istemiş",
+            "D": "isteyecekmiş"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 10,
+          "question": "Bu sorunun çözümü, düşündüğümüzden çok daha __.",
+          "options": {
+            "A": "karmaşıklık",
+            "B": "karmaşık",
+            "C": "karmaşıkça",
+            "D": "karmaşıklaştırmak"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 11,
+          "question": "Yağmur yağdığı için maç __.",
+          "options": {
+            "A": "iptal etmek",
+            "B": "iptal oldu",
+            "C": "iptal edildi",
+            "D": "iptal ediyor"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 12,
+          "question": "Üniversiteyi bitirdikten sonra yurt dışında eğitim __ istiyorum.",
+          "options": {
+            "A": "almak",
+            "B": "almakta",
+            "C": "alarak",
+            "D": "almış"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 13,
+          "question": "Bu kadar önemli bir kararı tek başına vermen doğru __.",
+          "options": {
+            "A": "değildir",
+            "B": "olmamış",
+            "C": "edilmiyor",
+            "D": "yapmıyor"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 14,
+          "question": "Bana yardım __, bu işi zamanında bitiremezdim.",
+          "options": {
+            "A": "edersen",
+            "B": "etmediğin hâlde",
+            "C": "etmeseydin",
+            "D": "etmemene rağmen"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 15,
+          "question": "Yeni teknoloji sayesinde işler eskisinden daha hızlı __.",
+          "options": {
+            "A": "yapılmaktadır",
+            "B": "yapmaktadır",
+            "C": "yapılmaktadırlar mı",
+            "D": "yapıldıktan"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 16,
+          "question": "Öğretmen, öğrencilerin ödevlerini zamanında __ gerektiğini söyledi.",
+          "options": {
+            "A": "teslim etmek",
+            "B": "teslim etmeleri",
+            "C": "teslim ettikleri",
+            "D": "teslim ederek"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 17,
+          "question": "Bu konuda kesin bir karar vermeden önce bütün seçenekleri __ gerekir.",
+          "options": {
+            "A": "değerlendirmek",
+            "B": "değerlendirilmek",
+            "C": "değerlendirmiş",
+            "D": "değerlendirilerek"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 18,
+          "question": "O kadar yorgundum ki eve gelir gelmez __.",
+          "options": {
+            "A": "uyuyakaldım",
+            "B": "uyandırdım",
+            "C": "uyandırıldım",
+            "D": "uyuyacağım"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 19,
+          "question": "Başarılı olmak istiyorsan yalnızca çalışmakla kalmamalı, aynı zamanda kendine de __.",
+          "options": {
+            "A": "güvenmelisin",
+            "B": "güvenilmelisin",
+            "C": "güvendin",
+            "D": "güveniyordun"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 20,
+          "question": "Araştırmanın sonuçları, beklenenin aksine oldukça __ çıktı.",
+          "options": {
+            "A": "şaşırtıcı",
+            "B": "şaşırmak",
+            "C": "şaşırmış",
+            "D": "şaşırtmak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 21,
+          "question": "İş başvurusunda bulunmadan önce özgeçmişini dikkatlice __.",
+          "options": {
+            "A": "gözden geçirmelisin",
+            "B": "gözden geçirildin",
+            "C": "gözden geçirilmek",
+            "D": "gözden geçirmişsin"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 22,
+          "question": "Bu kadar çok para harcamasına __, hâlâ maddi sıkıntı yaşıyor.",
+          "options": {
+            "A": "rağmen",
+            "B": "dolayı",
+            "C": "için",
+            "D": "üzere"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 23,
+          "question": "Şirketin yeni projesi, çevre kirliliğini azaltmayı __.",
+          "options": {
+            "A": "amaçlanıyor",
+            "B": "amaçlıyor",
+            "C": "amaçlanmak",
+            "D": "amaçlandıktan"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 24,
+          "question": "Konuşmacının söylediklerini dikkatlice dinledim; ancak söylediklerinin hepsine __.",
+          "options": {
+            "A": "katılmak zorunda kaldım",
+            "B": "katıldığımı sanıyorum",
+            "C": "katıldığımı söyleyemem",
+            "D": "katılacağım"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 25,
+          "question": "Teknoloji ne kadar gelişirse gelişsin, insan ilişkilerinin önemi hiçbir zaman __.",
+          "options": {
+            "A": "kaybolmayacaktır",
+            "B": "kaybolmamıştı",
+            "C": "kayboluyordu",
+            "D": "kaybolmuş olabilir mi"
+          },
+          "answer": "A"
+        }
+      ]
+    },
+    {
+      "level": "B2",
+      "questions": [
+        {
+          "number": 1,
+          "question": "Bütün uyarılara rağmen bildiğini okumaya devam etti ve sonunda zor durumda __.",
+          "options": {
+            "A": "bırakıldı",
+            "B": "kalmıştı",
+            "C": "kaldı",
+            "D": "kalacaktır"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 2,
+          "question": "Bu araştırmanın sonuçları, daha önce ortaya atılan varsayımların yeniden gözden geçirilmesini __ kılıyor.",
+          "options": {
+            "A": "zorunlu",
+            "B": "zorunlulukla",
+            "C": "zorunluluğu",
+            "D": "zorunlu olarak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 3,
+          "question": "Ne kadar uğraşmış __, istediği sonucu bir türlü elde edemedi.",
+          "options": {
+            "A": "ise",
+            "B": "olsa da",
+            "C": "olmasına",
+            "D": "olursa"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 4,
+          "question": "Toplantıda dile getirilen eleştiriler, projenin bazı yönlerinin yeterince __ ortaya koydu.",
+          "options": {
+            "A": "değerlendirilmediğini",
+            "B": "değerlendirmediğini",
+            "C": "değerlendirmeyeceğini",
+            "D": "değerlendirilmesinden"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 5,
+          "question": "Onun bu kadar kısa sürede başarıya ulaşması, yıllardır sürdürdüğü çalışmaların bir __ olarak görülebilir.",
+          "options": {
+            "A": "tesadüfü",
+            "B": "yansıması",
+            "C": "çelişkisi",
+            "D": "engeli"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 6,
+          "question": "Sorunun çözümüne yönelik öneriler sunulmuş __, henüz somut bir adım atılmadı.",
+          "options": {
+            "A": "olmasına rağmen",
+            "B": "olduğu sürece",
+            "C": "olduğundan dolayı",
+            "D": "olacağı için"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 7,
+          "question": "Bu kadar önemli bir konuda karar verirken duygularımızdan ziyade mantığımızı ön planda __ gerekir.",
+          "options": {
+            "A": "tutmamız",
+            "B": "tutularak",
+            "C": "tutmamızın",
+            "D": "tutulduğunda"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 8,
+          "question": "Şirketin ekonomik sıkıntıları aşabilmesi, yalnızca maliyetleri azaltmasına değil, aynı zamanda yeni pazarlara __ bağlıdır.",
+          "options": {
+            "A": "açılmasından",
+            "B": "açılmasına",
+            "C": "açılmayı",
+            "D": "açılmışken"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 9,
+          "question": "Yazar, eserinde toplumsal sorunları ele almakla __, bireyin iç dünyasını da derinlemesine inceliyor.",
+          "options": {
+            "A": "birlikte",
+            "B": "kalmayıp",
+            "C": "rağmen",
+            "D": "dolayı"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 10,
+          "question": "Yetkililer, alınan kararların uzun vadede ne gibi sonuçlar doğuracağını henüz tam olarak __.",
+          "options": {
+            "A": "öngöremiyor",
+            "B": "öngörülmüyor",
+            "C": "öngörülemez",
+            "D": "öngörülerek"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 11,
+          "question": "Bir toplumun gelişmişlik düzeyi, yalnızca ekonomik göstergelerle değil, eğitim ve kültür alanındaki ilerlemelerle de __.",
+          "options": {
+            "A": "ölçmek",
+            "B": "ölçülür",
+            "C": "ölçerek",
+            "D": "ölçülmesine"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 12,
+          "question": "Sana daha önce bu konuda dikkatli olmanı söylemiştim; keşke söylediklerimi dikkate __.",
+          "options": {
+            "A": "alıyorsun",
+            "B": "almışsın",
+            "C": "alsaydın",
+            "D": "alacaksın"
+          },
+          "answer": "C"
+        },
+        {
+          "number": 13,
+          "question": "Bilimsel gelişmelerin hız kazanması, etik tartışmaların da giderek daha fazla gündeme __ neden oluyor.",
+          "options": {
+            "A": "gelmesine",
+            "B": "gelmesini",
+            "C": "gelmekten",
+            "D": "geldiğine"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 14,
+          "question": "Her ne kadar ekonomik koşullar zorlaşmış __, şirket yatırımlarını sürdürmeye kararlı görünüyor.",
+          "options": {
+            "A": "olduğu için",
+            "B": "olsa da",
+            "C": "olacağından",
+            "D": "olmasına göre"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 15,
+          "question": "Konunun bütün yönleriyle ele alınabilmesi için farklı disiplinlerden uzmanların görüşlerine __ duyulmaktadır.",
+          "options": {
+            "A": "ihtiyaç",
+            "B": "ihtiyaçtan",
+            "C": "ihtiyaçlı",
+            "D": "ihtiyaçla"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 16,
+          "question": "Bu yaklaşımın kısa vadede yarar sağlaması mümkün olsa da uzun vadede ciddi sorunlara yol açabileceği __.",
+          "options": {
+            "A": "göz ardı edilmemelidir",
+            "B": "göz ardı etmemelidir",
+            "C": "göz ardı edilmemiştir mi",
+            "D": "göz ardı ederek"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 17,
+          "question": "İnsanların bilgiye erişiminin kolaylaşması, doğru bilgiyle yanlış bilginin birbirinden ayırt edilmesini daha da __ hâle getirmiştir.",
+          "options": {
+            "A": "güçlük",
+            "B": "güç",
+            "C": "güçleştiren",
+            "D": "güçlükle"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 18,
+          "question": "Araştırmacılar, elde edilen bulguların önceki çalışmalarla ne ölçüde örtüştüğünü belirlemek amacıyla verileri yeniden __.",
+          "options": {
+            "A": "analiz ettiler",
+            "B": "analiz edildi",
+            "C": "analiz edilerek",
+            "D": "analiz etmeleri"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 19,
+          "question": "Onca eleştiriye __, düşüncelerini savunmaktan vazgeçmedi.",
+          "options": {
+            "A": "karşın",
+            "B": "dolayı",
+            "C": "üzere",
+            "D": "itibaren"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 20,
+          "question": "Bir kararın doğru olup olmadığını anlayabilmek için yalnızca sonuçlarına değil, hangi koşullar altında __ da bakmak gerekir.",
+          "options": {
+            "A": "alındığına",
+            "B": "aldığına",
+            "C": "alınmasına",
+            "D": "alındığını"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 21,
+          "question": "Teknolojik yenilikler, insanların yaşam biçimlerini değiştirmekle kalmamış, toplumsal ilişkilerin yeniden şekillenmesine de __ olmuştur.",
+          "options": {
+            "A": "neden",
+            "B": "nedenli",
+            "C": "neden olarak",
+            "D": "nedenin"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 22,
+          "question": "İddiaların bilimsel açıdan geçerli sayılabilmesi için yeterli kanıtlarla __ gerekir.",
+          "options": {
+            "A": "desteklemesi",
+            "B": "desteklenmesi",
+            "C": "destekleyerek",
+            "D": "desteklemesine"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 23,
+          "question": "Bir konuyu yüzeysel biçimde ele almak yerine, nedenlerini ve sonuçlarını bütüncül bir yaklaşımla değerlendirmek daha __ olacaktır.",
+          "options": {
+            "A": "verim",
+            "B": "verimli",
+            "C": "verimlilik",
+            "D": "verimle"
+          },
+          "answer": "B"
+        },
+        {
+          "number": 24,
+          "question": "Toplantıda herkesin aynı fikirde olduğu izlenimi oluşsa da gerçekte bazı katılımcıların ciddi çekinceleri olduğu sonradan __.",
+          "options": {
+            "A": "anlaşılmıştır",
+            "B": "anlamıştır",
+            "C": "anlaşılacaktır mı",
+            "D": "anlamlandırarak"
+          },
+          "answer": "A"
+        },
+        {
+          "number": 25,
+          "question": "Eğitim sisteminde kalıcı bir iyileşme sağlanabilmesi, yapılan değişikliklerin yalnızca kâğıt üzerinde kalmamasına ve uygulamada karşılık __ bağlıdır.",
+          "options": {
+            "A": "bulmasına",
+            "B": "bulmasını",
+            "C": "bulduğuna",
+            "D": "bulmaktan"
+          },
+          "answer": "A"
+        }
+      ]
+    }
+  ]
+}
