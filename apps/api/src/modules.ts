@@ -21,6 +21,7 @@ export type Role = 'student' | 'teacher' | 'admin';
   @Prop() passwordHash?: string;
   @Prop({ required: true, enum: ['student','teacher','admin'], default: 'student' }) role: Role;
   @Prop() name: string;
+  @Prop() avatarUrl?: string;
   @Prop({ unique: true, sparse: true }) telegramId?: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -50,6 +51,7 @@ export const TestAttemptSchema=SchemaFactory.createForClass(TestAttempt);
 
 export class RegisterDto { @IsEmail() email: string; @MinLength(8) password: string; @IsString() @MinLength(2) name: string; @IsIn(['student','teacher']) role: Role; }
 export class LoginDto { @IsEmail() email: string; @IsString() password: string; }
+export class UpdateProfileDto { @IsString() @MinLength(2) name: string; @IsString() @IsOptional() avatarUrl?: string; }
 export class TelegramDto { @IsNumber() id: number; @IsNumber() auth_date: number; @IsString() hash: string; @IsString() @IsOptional() first_name?: string; @IsString() @IsOptional() last_name?: string; @IsString() @IsOptional() username?: string; @IsString() @IsOptional() photo_url?: string; @IsIn(['student','teacher']) @IsOptional() role?: Role; }
 export class LessonDto { @IsString() title: string; @IsString() @IsOptional() content?: string; @IsString() @IsOptional() videoUrl?: string; }
 export class SectionDto { @IsString() title: string; @IsArray() @ValidateNested({ each: true }) @Type(() => LessonDto) lessons: LessonDto[]; }
@@ -71,12 +73,15 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
     const email = this.config.get('ADMIN_EMAIL'), password = this.config.get('ADMIN_PASSWORD');
     if (!email || !password) return;
     const hash = await bcrypt.hash(password, 12);
-    await this.users.findOneAndUpdate({ email: email.toLowerCase() }, { $setOnInsert: { email: email.toLowerCase(), passwordHash: hash, role: 'admin', name: 'Administrator' } }, { upsert: true, new: true });
-    const admin:any=await this.users.findOne({email:email.toLowerCase()});
+    const adminEmail = email.trim().toLowerCase();
+    await this.users.findOneAndUpdate({ email: adminEmail }, { $set: { passwordHash: hash, role: 'admin' }, $setOnInsert: { email: adminEmail, name: 'Administrator' } }, { upsert: true, new: true });
+    const admin:any=await this.users.findOne({email:adminEmail});
     const initial:any=JSON.parse(readFileSync(join(__dirname,'../data/turkish-tests.json'),'utf8'));
     for(const group of initial.tests||[]) await this.tests.findOneAndUpdate({seedKey:`initial:${group.level}`},{$setOnInsert:{seedKey:`initial:${group.level}`,title:`Turk tili ${group.level} testi`,level:group.level,questions:group.questions,published:true,createdBy:admin._id}},{upsert:true,new:true});
   }
-  private async token(user: any) { return { accessToken: await this.jwt.signAsync({ sub: user._id.toString(), email: user.email, role: user.role, name: user.name }), user: { id: user._id, email: user.email, role: user.role, name: user.name } }; }
+  private async token(user: any) { return { accessToken: await this.jwt.signAsync({ sub: user._id.toString(), email: user.email, role: user.role, name: user.name }), user: { id: user._id, email: user.email, role: user.role, name: user.name, avatarUrl: user.avatarUrl } }; }
+  async getProfile(userId: string) { const user = await this.users.findById(userId, { passwordHash: 0 }).lean(); if (!user) throw new NotFoundException('Foydalanuvchi topilmadi'); return user; }
+  async updateProfile(userId: string, dto: UpdateProfileDto) { const avatarUrl = dto.avatarUrl?.trim() || ''; if (avatarUrl && !/^https:\/\//i.test(avatarUrl)) throw new BadRequestException('Profil rasmi uchun HTTPS havola kiriting'); const user = await this.users.findByIdAndUpdate(userId, { $set: { name: dto.name.trim(), avatarUrl } }, { new: true, projection: { passwordHash: 0 } }).lean(); if (!user) throw new NotFoundException('Foydalanuvchi topilmadi'); return user; }
   async register(dto: RegisterDto) { if (await this.users.exists({ email: dto.email.toLowerCase() })) throw new ConflictException('Bu email ro‘yxatdan o‘tgan'); const user = await this.users.create({ email: dto.email.toLowerCase(), passwordHash: await bcrypt.hash(dto.password, 12), name: dto.name, role: dto.role }); return this.token(user); }
   async login(dto: LoginDto) { const user = await this.users.findOne({ email: dto.email.toLowerCase() }); if (!user?.passwordHash || !await bcrypt.compare(dto.password, user.passwordHash)) throw new UnauthorizedException('Email yoki parol noto‘g‘ri'); return this.token(user); }
   async telegram(payload: TelegramDto) {
@@ -86,7 +91,7 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
     if (digest.length !== hash.length || !timingSafeEqual(Buffer.from(digest), Buffer.from(hash))) throw new UnauthorizedException('Telegram ma’lumotlari noto‘g‘ri');
     const authDate = Number(payload.auth_date); if (!authDate || Math.abs(Date.now()/1000-authDate) > 86400) throw new UnauthorizedException('Telegram sessiyasi eskirgan');
     const email = `tg_${payload.id}@telegram.local`; const existing = await this.users.findOne({ telegramId: String(payload.id) });
-    const user = existing || await this.users.create({ telegramId: String(payload.id), email, name: [payload.first_name,payload.last_name].filter(Boolean).join(' ') || payload.username || 'Telegram foydalanuvchisi', role: payload.role || 'student' });
+    const user = existing || await this.users.create({ telegramId: String(payload.id), email, name: [payload.first_name,payload.last_name].filter(Boolean).join(' ') || payload.username || 'Telegram foydalanuvchisi', avatarUrl: payload.photo_url, role: payload.role || 'student' });
     return this.token(user);
   }
 }
@@ -95,6 +100,8 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
  @Post('register') register(@Body() dto: RegisterDto) { return this.auth.register(dto); }
  @Post('login') login(@Body() dto: LoginDto) { return this.auth.login(dto); }
  @Post('telegram') telegram(@Body() dto: TelegramDto) { return this.auth.telegram(dto); }
+ @Get('me') @UseGuards(JwtAuth) @ApiBearerAuth() me(@Req() req: any) { return this.auth.getProfile(req.user.id); }
+ @Patch('me') @UseGuards(JwtAuth) @ApiBearerAuth() updateMe(@Req() req: any, @Body() dto: UpdateProfileDto) { return this.auth.updateProfile(req.user.id, dto); }
 }
 
 @ApiTags('courses') @Controller('courses') export class CoursesController {
@@ -114,7 +121,7 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
  @Get() list(){return this.tests.find({published:true},{title:1,level:1,'questions.number':1}).lean().then(rows=>rows.map((t:any)=>({...t,questionCount:t.questions?.length||0,questions:undefined})));}
  @Get('manage') @UseGuards(JwtAuth) @ApiBearerAuth() async manage(@Req() req:any){if(req.user?.role!=='admin')throw new ForbiddenException();return this.tests.find({}, {title:1,level:1,'questions.number':1,createdAt:1}).sort({level:1}).lean().then(rows=>rows.map((t:any)=>({...t,questionCount:t.questions?.length||0,questions:undefined})));}
  @Get(':id') async detail(@Param('id') id:string){const test:any=await this.tests.findOne({_id:id,published:true}).lean();if(!test)throw new NotFoundException();return{_id:test._id,title:test.title,level:test.level,questions:test.questions.map((q:any)=>({number:q.number,question:q.question,options:q.options}))};}
- @Post(':id/submit') @UseGuards(JwtAuth) @ApiBearerAuth() async submit(@Param('id') id:string,@Req() req:any,@Body('answers') answers:Record<string,string>){if(!['student','admin'].includes(req.user.role))throw new ForbiddenException();const test:any=await this.tests.findOne({_id:id,published:true}).lean();if(!test)throw new NotFoundException();if(!answers||typeof answers!=='object'||Array.isArray(answers))throw new BadRequestException('Javoblarni yuboring');for(const [key,value] of Object.entries(answers)){if(!test.questions.some((q:any)=>String(q.number)===key)||!['A','B','C','D'].includes(value))throw new BadRequestException('Javob formati noto‘g‘ri');}const score=test.questions.filter((q:any)=>answers[String(q.number)]===q.answer).length;await this.attempts.create({testId:id,userId:req.user.id,score,total:test.questions.length,answers});return{score,total:test.questions.length,percentage:Math.round(score*100/test.questions.length),results:test.questions.map((q:any)=>({number:q.number,selected:answers[String(q.number)]||null,correctAnswer:q.answer,correct:answers[String(q.number)]===q.answer}))};}
+ @Post(':id/submit') async submit(@Param('id') id:string,@Req() req:any,@Body('answers') answers:Record<string,string>){const test:any=await this.tests.findOne({_id:id,published:true}).lean();if(!test)throw new NotFoundException();if(!answers||typeof answers!=='object'||Array.isArray(answers))throw new BadRequestException('Javoblarni yuboring');for(const [key,value] of Object.entries(answers)){if(!test.questions.some((q:any)=>String(q.number)===key)||!['A','B','C','D'].includes(value))throw new BadRequestException('Javob formati noto‘g‘ri');}const score=test.questions.filter((q:any)=>answers[String(q.number)]===q.answer).length;if(req.user&&['student','admin'].includes(req.user.role))await this.attempts.create({testId:id,userId:req.user.id,score,total:test.questions.length,answers});return{score,total:test.questions.length,percentage:Math.round(score*100/test.questions.length),results:test.questions.map((q:any)=>({number:q.number,selected:answers[String(q.number)]||null,correctAnswer:q.answer,correct:answers[String(q.number)]===q.answer}))};}
 }
 
 @ApiTags('admin') @ApiBearerAuth() @UseGuards(JwtAuth) @Controller('admin') export class AdminController {

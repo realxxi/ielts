@@ -1,5 +1,6 @@
 import './styles.css';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SiteHeader from '@/components/site-header';
 export const metadata: Metadata = { title: 'Tilshunos — yangi til, yangi imkoniyat', description: 'O‘zingizga mos kursni toping va chet tilini o‘rganishni bugun boshlang.' };
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="uz"><body><header className="topbar"><Link href="/" className="brand"><span className="brand-icon">t.</span> tilshunos</Link><nav><Link href="/courses">Kurslar</Link><Link href="/tests">Testlar</Link><Link href="/#how">Qanday ishlaydi</Link><Link href="/dashboard">Kabinet</Link></nav><div className="top-actions"><Link className="login-link" href="/login">Kirish</Link><Link className="button small" href="/register">Boshlash <span>↗</span></Link></div><button className="mobile-menu" aria-label="Menyu">☰</button></header>{children}<footer><Link href="/" className="brand"><span className="brand-icon">t.</span> tilshunos</Link><span>Til o‘rganish — dunyo sari qadam.</span><span>© 2026 Tilshunos</span></footer></body></html>; }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="uz"><body><SiteHeader />{children}<footer><Link href="/" className="brand"><span className="brand-icon">t.</span> tilshunos</Link><span>Til o‘rganish — dunyo sari qadam.</span><span>© 2026 Tilshunos</span></footer></body></html>; }

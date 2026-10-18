@@ -6,5 +6,5 @@ export async function api(path: string, options: RequestInit = {}) {
   if (!response.ok) throw new Error(data.message || 'So‘rovni bajarib bo‘lmadi');
   return data;
 }
-export function saveSession(data: any) { localStorage.setItem('tilshunos_token', data.accessToken); localStorage.setItem('tilshunos_user', JSON.stringify(data.user)); }
+export function saveSession(data: any) { localStorage.setItem('tilshunos_token', data.accessToken); localStorage.setItem('tilshunos_user', JSON.stringify(data.user)); window.dispatchEvent(new Event('tilshunos:auth-change')); }
 export function getUser() { try { return JSON.parse(localStorage.getItem('tilshunos_user') || 'null'); } catch { return null; } }
