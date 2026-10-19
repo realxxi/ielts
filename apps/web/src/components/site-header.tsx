@@ -10,6 +10,7 @@ type SessionUser = { name?: string; avatarUrl?: string } | null;
 export default function SiteHeader() {
   const router = useRouter();
   const [user, setUser] = useState<SessionUser>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   function logout() {
     localStorage.removeItem('tilshunos_token');
@@ -33,13 +34,13 @@ export default function SiteHeader() {
   const initials = user?.name?.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() || 'U';
 
   return (
-    <header className="topbar">
+    <header className={`topbar${menuOpen ? ' menu-open' : ''}`}>
       <Link href="/" className="brand"><span className="brand-icon">t.</span> tilshunos</Link>
-      <nav>
-        <Link href="/courses">Kurslar</Link>
-        <Link href="/tests">Testlar</Link>
-        {!user && <Link href="/#how">Qanday ishlaydi</Link>}
-        <Link href="/dashboard">Kabinet</Link>
+      <nav className={menuOpen ? 'is-open' : ''}>
+        <Link href="/courses" onClick={() => setMenuOpen(false)}>Kurslar</Link>
+        <Link href="/tests" onClick={() => setMenuOpen(false)}>Testlar</Link>
+        {!user && <Link href="/#how" onClick={() => setMenuOpen(false)}>Qanday ishlaydi</Link>}
+        <Link href="/dashboard" onClick={() => setMenuOpen(false)}>Kabinet</Link>
       </nav>
       <div className={`top-actions${user ? ' is-authenticated' : ''}`}>
         {user ? (
@@ -61,7 +62,7 @@ export default function SiteHeader() {
           </>
         )}
       </div>
-      <button className="mobile-menu" aria-label="Menyu">☰</button>
+      <button className="mobile-menu" type="button" aria-label={menuOpen ? 'Menyuni yopish' : 'Menyuni ochish'} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? '×' : '☰'}</button>
     </header>
   );
 }

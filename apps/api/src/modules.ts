@@ -1,4 +1,4 @@
-import { Module, Injectable, OnModuleInit, Controller, Post, Get, Patch, Delete, Body, Param, Req, UseGuards, UnauthorizedException, ForbiddenException, NotFoundException, ConflictException, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
+import { Module, Injectable, OnModuleInit, Controller, Post, Get, Patch, Delete, Body, Param, Req, UseGuards, UnauthorizedException, ForbiddenException, NotFoundException, ConflictException, BadRequestException, ServiceUnavailableException, HttpException } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { MongooseModule, InjectModel } from '@nestjs/mongoose';
@@ -10,6 +10,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as bcrypt from 'bcryptjs';
 import { createHmac, timingSafeEqual, createHash } from 'crypto';
+import { randomInt } from 'crypto';
+import * as nodemailer from 'nodemailer';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { IsEmail, IsIn, IsOptional, IsString, MinLength, IsBoolean, IsArray, ValidateNested, IsNumber, IsInt, Min, IsMongoId, ArrayMinSize } from 'class-validator';
@@ -25,6 +27,17 @@ export type Role = 'student' | 'teacher' | 'admin';
   @Prop({ unique: true, sparse: true }) telegramId?: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
+@Schema() export class PendingRegistration {
+  @Prop({required:true,unique:true,lowercase:true}) email:string;
+  @Prop({required:true}) name:string;
+  @Prop({required:true,enum:['student','teacher']}) role:Role;
+  @Prop({required:true}) passwordHash:string;
+  @Prop({required:true}) codeHash:string;
+  @Prop({required:true}) sentAt:Date;
+  @Prop({required:true,expires:0}) expiresAt:Date;
+  @Prop({default:0}) attempts:number;
+}
+export const PendingRegistrationSchema=SchemaFactory.createForClass(PendingRegistration);
 @Schema() export class Lesson { @Prop({ required: true }) title: string; @Prop({ default: '' }) content: string; @Prop({ default: '' }) videoUrl: string; }
 export const LessonSchema = SchemaFactory.createForClass(Lesson);
 @Schema() export class Section { @Prop({ required: true }) title: string; @Prop({ type: [LessonSchema], default: [] }) lessons: Lesson[]; }
@@ -55,6 +68,9 @@ export const TestAttemptSchema=SchemaFactory.createForClass(TestAttempt);
 
 export class RegisterDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail({}, { message: 'To‘g‘ri email manzilini kiriting' }) email: string; @IsString() @MinLength(8, { message: 'Parol kamida 8 belgidan iborat bo‘lsin' }) password: string; @Transform(({value}) => typeof value === 'string' ? value.trim() : value) @IsString() @MinLength(2, { message: 'Ism kamida 2 belgidan iborat bo‘lsin' }) name: string; @IsIn(['student','teacher']) role: Role; }
 export class LoginDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail({}, { message: 'To‘g‘ri email manzilini kiriting' }) email: string; @IsString() password: string; }
+export class GoogleAuthDto { @IsString() credential: string; @IsIn(['student','teacher']) @IsOptional() role?: Role; }
+export class VerifyRegistrationDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail() email:string; @IsString() @MinLength(6) code:string; }
+export class RegistrationEmailDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail() email:string; }
 export class UpdateProfileDto { @IsString() @MinLength(2) name: string; @IsString() @IsOptional() avatarUrl?: string; }
 export class TelegramDto { @IsNumber() id: number; @IsNumber() auth_date: number; @IsString() hash: string; @IsString() @IsOptional() first_name?: string; @IsString() @IsOptional() last_name?: string; @IsString() @IsOptional() username?: string; @IsString() @IsOptional() photo_url?: string; @IsIn(['student','teacher']) @IsOptional() role?: Role; }
 export class LessonDto { @IsString() title: string; @IsString() @IsOptional() content?: string; @IsString() @IsOptional() videoUrl?: string; }
@@ -75,7 +91,7 @@ export const JwtAuth = AuthGuard('jwt');
 export function allow(...roles: Role[]) { return (target: any, key: string, descriptor: PropertyDescriptor) => { const original = descriptor.value; descriptor.value = function (...args: any[]) { const req = args.find(x => x?.user); if (!req?.user) throw new UnauthorizedException(); if (!roles.includes(req.user.role)) throw new ForbiddenException(); return original.apply(this, args); }; return descriptor; }; }
 
 @Injectable() export class AuthService implements OnModuleInit {
-  constructor(@InjectModel(User.name) private users: Model<User>, @InjectModel(LanguageTest.name) private tests:Model<LanguageTest>, private jwt: JwtService, private config: ConfigService) {}
+  constructor(@InjectModel(User.name) private users: Model<User>, @InjectModel(LanguageTest.name) private tests:Model<LanguageTest>, @InjectModel(PendingRegistration.name) private pending:Model<PendingRegistration>, private jwt: JwtService, private config: ConfigService) {}
   async onModuleInit() {
     const email = this.config.get('ADMIN_EMAIL'), password = this.config.get('ADMIN_PASSWORD');
     if (!email || !password) return;
@@ -89,8 +105,26 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
   private async token(user: any) { return { accessToken: await this.jwt.signAsync({ sub: user._id.toString(), email: user.email, role: user.role, name: user.name }), user: { id: user._id, email: user.email, role: user.role, name: user.name, avatarUrl: user.avatarUrl } }; }
   async getProfile(userId: string) { const user = await this.users.findById(userId, { passwordHash: 0 }).lean(); if (!user) throw new NotFoundException('Foydalanuvchi topilmadi'); return user; }
   async updateProfile(userId: string, dto: UpdateProfileDto) { const avatarUrl = dto.avatarUrl?.trim() || ''; if (avatarUrl && !/^https:\/\//i.test(avatarUrl)) throw new BadRequestException('Profil rasmi uchun HTTPS havola kiriting'); const user = await this.users.findByIdAndUpdate(userId, { $set: { name: dto.name.trim(), avatarUrl } }, { new: true, projection: { passwordHash: 0 } }).lean(); if (!user) throw new NotFoundException('Foydalanuvchi topilmadi'); return user; }
-  async register(dto: RegisterDto) { const email = dto.email.trim().toLowerCase(); try { if (await this.users.exists({ email })) throw new ConflictException('Bu email ro‘yxatdan o‘tgan'); const user = await this.users.create({ email, passwordHash: await bcrypt.hash(dto.password, 12), name: dto.name.trim(), role: dto.role }); return this.token(user); } catch (error:any) { if(error instanceof ConflictException)throw error;if(error?.code===11000) throw new ConflictException('Bu email ro‘yxatdan o‘tgan'); console.error('Email registration failed:',error); if(['MongoServerSelectionError','MongooseError','MongoNetworkError'].includes(error?.name))throw new ServiceUnavailableException('Ma’lumotlar bazasiga ulanib bo‘lmadi. Server konfiguratsiyasini tekshiring.'); throw error; } }
+  private emailCodeHash(code:string){return createHash('sha256').update(code).digest('hex');}
+  private async sendRegistrationCode(email:string,code:string){const gmail=this.config.get<string>('GMAIL_USER')?.trim(),appPassword=this.config.get<string>('GMAIL_APP_PASSWORD')?.replace(/\s/g,'');if(!gmail||!appPassword)throw new ServiceUnavailableException('Gmail orqali tasdiqlash sozlanmagan. Server administratoriga murojaat qiling.');const transporter=nodemailer.createTransport({service:'gmail',auth:{user:gmail,pass:appPassword}});await transporter.sendMail({from:`Tilshunos <${gmail}>`,to:email,subject:'Tilshunos — email tasdiqlash kodi',text:`Ro‘yxatdan o‘tishni yakunlash uchun tasdiqlash kodingiz: ${code}\n\nKod 10 daqiqa amal qiladi. Agar bu so‘rov sizniki bo‘lmasa, xabarni e’tiborsiz qoldiring.`,html:`<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:28px;color:#18251e"><h2>Tilshunos email tasdiqlash</h2><p>Ro‘yxatdan o‘tishni yakunlash uchun ushbu kodni kiriting:</p><p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#245a3d">${code}</p><p>Kod 10 daqiqa amal qiladi.</p><small>Agar bu so‘rov sizniki bo‘lmasa, xabarni e’tiborsiz qoldiring.</small></div>`});}
+  private async createAndSendCode(data:{email:string;name:string;role:Role;passwordHash:string}){const email=data.email;if(await this.users.exists({email}))throw new ConflictException('Bu email bilan akkaunt mavjud. Kirish sahifasidan kiring.');const previous=await this.pending.findOne({email});if(previous&&Date.now()-previous.sentAt.getTime()<60_000)throw new HttpException('Yangi kod so‘rashdan oldin 1 daqiqa kuting.',429);const code=String(randomInt(100000,1_000_000));await this.pending.findOneAndUpdate({email},{$set:{...data,codeHash:this.emailCodeHash(code),sentAt:new Date(),expiresAt:new Date(Date.now()+10*60_000),attempts:0}},{upsert:true,new:true,setDefaultsOnInsert:true});try{await this.sendRegistrationCode(email,code);}catch(error){await this.pending.deleteOne({email});console.error('Registration email delivery failed:',error);throw new ServiceUnavailableException('Tasdiqlash xati yuborilmadi. Gmail sozlamalarini tekshiring.');}return{verificationRequired:true,email};}
+  async register(dto:RegisterDto){const email=dto.email.trim().toLowerCase();try{return await this.createAndSendCode({email,name:dto.name.trim(),role:dto.role,passwordHash:await bcrypt.hash(dto.password,12)});}catch(error:any){if(error instanceof HttpException)throw error;if(error?.code===11000)throw new ConflictException('Bu email bilan akkaunt mavjud. Kirish sahifasidan kiring.');console.error('Email registration failed:',error);if(['MongoServerSelectionError','MongooseError','MongoNetworkError'].includes(error?.name))throw new ServiceUnavailableException('Ma’lumotlar bazasiga ulanib bo‘lmadi. Server konfiguratsiyasini tekshiring.');throw error;}}
+  async resendRegistrationCode(dto:RegistrationEmailDto){const email=dto.email.trim().toLowerCase();const pending=await this.pending.findOne({email});if(!pending)throw new NotFoundException('Tasdiqlash uchun kutilayotgan ro‘yxatdan o‘tish topilmadi. Formani qayta yuboring.');return this.createAndSendCode({email,name:pending.name,role:pending.role,passwordHash:pending.passwordHash});}
+  async verifyRegistration(dto:VerifyRegistrationDto){const email=dto.email.trim().toLowerCase(),pending=await this.pending.findOne({email,expiresAt:{$gt:new Date()}});if(!pending)throw new BadRequestException('Tasdiqlash kodi eskirgan yoki topilmadi. Yangi kod so‘rang.');if(pending.attempts>=5){await this.pending.deleteOne({_id:pending._id});throw new BadRequestException('Urinishlar soni tugadi. Ro‘yxatdan o‘tishni qaytadan boshlang.');}if(this.emailCodeHash(dto.code)!==pending.codeHash){pending.attempts+=1;await pending.save();throw new UnauthorizedException('Tasdiqlash kodi noto‘g‘ri.');}let user:any;try{user=await this.users.create({email:pending.email,passwordHash:pending.passwordHash,name:pending.name,role:pending.role});}catch(error:any){if(error?.code===11000)throw new ConflictException('Bu email bilan akkaunt mavjud. Kirish sahifasidan kiring.');throw error;}await this.pending.deleteOne({_id:pending._id});return this.token(user);}
   async login(dto: LoginDto) { const user = await this.users.findOne({ email: dto.email.trim().toLowerCase() }); if (!user?.passwordHash || !await bcrypt.compare(dto.password, user.passwordHash)) throw new UnauthorizedException('Email yoki parol noto‘g‘ri'); return this.token(user); }
+  async google(credential: string, role: Role = 'student') {
+    const clientId = this.config.get<string>('GOOGLE_CLIENT_ID')?.trim();
+    if (!clientId) throw new ServiceUnavailableException('Google orqali kirish sozlanmagan.');
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
+    if (!response.ok) throw new UnauthorizedException('Google hisobini tasdiqlab bo‘lmadi.');
+    const claims: any = await response.json();
+    if (claims.aud !== clientId || !['https://accounts.google.com', 'accounts.google.com'].includes(claims.iss) || claims.email_verified !== 'true' || !claims.email) throw new UnauthorizedException('Google hisob ma’lumotlari yaroqsiz.');
+    const email = String(claims.email).trim().toLowerCase();
+    let user: any = await this.users.findOne({ email });
+    if (!user) user = await this.users.create({ email, name: claims.name || email.split('@')[0], avatarUrl: claims.picture, role });
+    else if (!user.avatarUrl && claims.picture) { user.avatarUrl = claims.picture; await user.save(); }
+    return this.token(user);
+  }
   async telegram(payload: TelegramDto) {
     const botToken = this.config.get('TELEGRAM_BOT_TOKEN'); if (!botToken) throw new BadRequestException('Telegram login sozlanmagan');
     const { hash, ...fields } = payload; const data = Object.entries(fields).filter(([k,v]) => k !== 'role' && v !== undefined).sort(([a],[b]) => a.localeCompare(b)).map(([k,v]) => `${k}=${v}`).join('\n');
@@ -105,7 +139,10 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
 @ApiTags('auth') @Controller('auth') export class AuthController {
  constructor(private auth: AuthService) {}
  @Post('register') register(@Body() dto: RegisterDto) { return this.auth.register(dto); }
+ @Post('verify-registration') verifyRegistration(@Body() dto:VerifyRegistrationDto){return this.auth.verifyRegistration(dto);}
+ @Post('resend-registration-code') resendRegistrationCode(@Body() dto:RegistrationEmailDto){return this.auth.resendRegistrationCode(dto);}
  @Post('login') login(@Body() dto: LoginDto) { return this.auth.login(dto); }
+ @Post('google') google(@Body() dto: GoogleAuthDto) { return this.auth.google(dto.credential, dto.role); }
  @Post('telegram') telegram(@Body() dto: TelegramDto) { return this.auth.telegram(dto); }
  @Get('me') @UseGuards(JwtAuth) @ApiBearerAuth() me(@Req() req: any) { return this.auth.getProfile(req.user.id); }
  @Patch('me') @UseGuards(JwtAuth) @ApiBearerAuth() updateMe(@Req() req: any, @Body() dto: UpdateProfileDto) { return this.auth.updateProfile(req.user.id, dto); }
@@ -156,4 +193,4 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
  @Patch('access-requests/:id') async reviewAccess(@Param('id') id: string, @Req() req: any, @Body() dto: AccessReviewDto) { this.check(req); const request: any = await this.requests.findByIdAndUpdate(id,{status:dto.status},{new:true}); if (!request) throw new NotFoundException(); if(dto.status==='approved') await this.courses.findByIdAndUpdate(request.courseId,{$addToSet:{enrolledUsers:request.userId}}); return request; }
 }
 
-@Module({ imports:[ConfigModule.forRoot({isGlobal:true}),MongooseModule.forRootAsync({imports:[ConfigModule],inject:[ConfigService],useFactory:(c:ConfigService)=>({uri:c.get('MONGODB_URI','mongodb://127.0.0.1:27017/tilshunos')})}),MongooseModule.forFeature([{name:User.name,schema:UserSchema},{name:Course.name,schema:CourseSchema},{name:AccessRequest.name,schema:AccessRequestSchema},{name:Progress.name,schema:ProgressSchema},{name:LanguageTest.name,schema:LanguageTestSchema},{name:TestAttempt.name,schema:TestAttemptSchema}]),JwtModule.registerAsync({global:true,imports:[ConfigModule],inject:[ConfigService],useFactory:(c:ConfigService)=>({secret:c.get('JWT_SECRET'),signOptions:{expiresIn:c.get('JWT_EXPIRES_IN','7d')}})}),PassportModule.register({defaultStrategy:'jwt'})],controllers:[AuthController,CoursesController,TestsController,AdminController],providers:[AuthService,JwtStrategy]}) export class AppModule {}
+@Module({ imports:[ConfigModule.forRoot({isGlobal:true}),MongooseModule.forRootAsync({imports:[ConfigModule],inject:[ConfigService],useFactory:(c:ConfigService)=>({uri:c.get('MONGODB_URI','mongodb://127.0.0.1:27017/tilshunos')})}),MongooseModule.forFeature([{name:User.name,schema:UserSchema},{name:PendingRegistration.name,schema:PendingRegistrationSchema},{name:Course.name,schema:CourseSchema},{name:AccessRequest.name,schema:AccessRequestSchema},{name:Progress.name,schema:ProgressSchema},{name:LanguageTest.name,schema:LanguageTestSchema},{name:TestAttempt.name,schema:TestAttemptSchema}]),JwtModule.registerAsync({global:true,imports:[ConfigModule],inject:[ConfigService],useFactory:(c:ConfigService)=>({secret:c.get('JWT_SECRET'),signOptions:{expiresIn:c.get('JWT_EXPIRES_IN','7d')}})}),PassportModule.register({defaultStrategy:'jwt'})],controllers:[AuthController,CoursesController,TestsController,AdminController],providers:[AuthService,JwtStrategy]}) export class AppModule {}

@@ -21,6 +21,12 @@ services:
         sync: false
       - key: TELEGRAM_BOT_TOKEN
         sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
       - key: WEB_ORIGIN
         value: https://tilshunos-web-4dj7.onrender.com
 
@@ -42,3 +48,5 @@ services:
         value: https://tilshunos-api-4dj7.onrender.com/api
       - key: NEXT_PUBLIC_TELEGRAM_BOT_NAME
         value: Authlogin1122bot
+      - key: NEXT_PUBLIC_GOOGLE_CLIENT_ID
+        sync: false
