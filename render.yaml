@@ -21,10 +21,12 @@ services:
         sync: false
       - key: TELEGRAM_BOT_TOKEN
         sync: false
-      - key: GMAIL_USER
+      - key: BREVO_API_KEY
         sync: false
-      - key: GMAIL_APP_PASSWORD
+      - key: BREVO_SENDER_EMAIL
         sync: false
+      - key: BREVO_SENDER_NAME
+        value: Tilshunos
       - key: GOOGLE_CLIENT_ID
         sync: false
       - key: WEB_ORIGIN
