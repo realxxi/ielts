@@ -12,6 +12,7 @@ export default function Register() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState('');
+  const [verificationPurpose, setVerificationPurpose] = useState<'register' | 'login'>('register');
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const roleRef = useRef(role);
   const telegramBotName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME?.trim().replace(/^@/, '') || '';
@@ -34,7 +35,7 @@ export default function Register() {
 
   async function submitRegistration(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError(''); const form = new FormData(event.currentTarget);
-    try { const result = await api('/auth/register', { method: 'POST', body: JSON.stringify({ name: String(form.get('name') || '').trim(), email: String(form.get('email') || '').trim().toLowerCase(), password: form.get('password'), role }) }); setVerificationEmail(result.email); }
+    try { const result = await api('/auth/register', { method: 'POST', body: JSON.stringify({ name: String(form.get('name') || '').trim(), email: String(form.get('email') || '').trim().toLowerCase(), password: form.get('password'), role }) }); setVerificationPurpose(result.purpose === 'login' ? 'login' : 'register'); setVerificationEmail(result.email); }
     catch (e) { setError(e instanceof Error ? e.message : 'Ro‘yxatdan o‘tib bo‘lmadi'); } finally { setBusy(false); }
   }
   async function verify(event: React.FormEvent<HTMLFormElement>) {
@@ -47,11 +48,11 @@ export default function Register() {
   const emailExists = /email.*(mavjud|ro‘yxatdan o‘tgan)|ro‘yxatdan o‘tgan/i.test(error);
   return <main className="page-shell"><div className="auth-card">
     <div className="eyebrow">TILSHUNOSGA XUSH KELIBSIZ</div>
-    <h1>{verificationEmail ? 'Emailingizni tasdiqlang.' : 'Yo‘lingizni boshlang.'}</h1>
+    <h1>{verificationEmail ? (verificationPurpose === 'login' ? 'Email orqali kiring.' : 'Emailingizni tasdiqlang.') : 'Yo‘lingizni boshlang.'}</h1>
     {verificationEmail ? <>
-      <p><b>{verificationEmail}</b> manziliga 6 xonali kod yubordik. Kod 10 daqiqa amal qiladi.</p>
+      <p><b>{verificationEmail}</b> manziliga {verificationPurpose === 'login' ? 'akkauntga kirish' : 'ro‘yxatdan o‘tishni yakunlash'} uchun 6 xonali kod yubordik. Kod 10 daqiqa amal qiladi.</p>
       <form className="form" onSubmit={verify}><label>Tasdiqlash kodi<input name="code" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" minLength={6} maxLength={6} required placeholder="123456" /></label>
-        {error && <p className="form-error" role="alert">{error}</p>}<button className="button" disabled={busy}>{busy ? 'Tekshirilmoqda...' : 'Emailni tasdiqlash'} <span>↗</span></button><button type="button" className="small-button" disabled={busy} onClick={resendCode}>Kodni qayta yuborish</button>
+        {error && <p className="form-error" role="alert">{error}</p>}<button className="button" disabled={busy}>{busy ? 'Tekshirilmoqda...' : verificationPurpose === 'login' ? 'Kirishni davom ettirish' : 'Emailni tasdiqlash'} <span>↗</span></button><button type="button" className="small-button" disabled={busy} onClick={resendCode}>Kodni qayta yuborish</button>
       </form>
     </> : <>
       <p>Hisob turini tanlang va qulay usulda ro‘yxatdan o‘ting.</p>
