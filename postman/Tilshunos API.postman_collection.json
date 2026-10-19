@@ -1,0 +1,183 @@
+{
+  "info": {
+    "name": "Tilshunos API",
+    "description": "Tilshunos NestJS API uchun so‘rovlar to‘plami. API manzilini collection variable `baseUrl` orqali o‘zgartiring. Himoyalangan so‘rovlar `token` variable’dan Bearer token oladi. Email ro‘yxatdan o‘tishda kod Brevo orqali yuboriladi; kodni `registrationCode` variable’iga qo‘lda kiriting.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://tilshunos-api-4dj7.onrender.com/api", "type": "string" },
+    { "key": "token", "value": "", "type": "string" },
+    { "key": "email", "value": "", "type": "string" },
+    { "key": "password", "value": "", "type": "string" },
+    { "key": "registrationCode", "value": "", "type": "string" },
+    { "key": "courseId", "value": "", "type": "string" },
+    { "key": "testId", "value": "", "type": "string" },
+    { "key": "userId", "value": "", "type": "string" },
+    { "key": "requestId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (emailga OTP yuborish)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman Foydalanuvchi\",\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"role\": \"student\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/register",
+            "description": "Muvaffaqiyatli bo‘lsa Brevo orqali 6 xonali kod yuboradi. `email` va `password` variable’larini avval to‘ldiring."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Register so‘rovi 2xx javob qaytardi', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code < 300) { const data = pm.response.json(); if (data.email) pm.collectionVariables.set('email', data.email); }"] } }]
+        },
+        {
+          "name": "Verify registration (OTP tasdiqlash)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"code\": \"{{registrationCode}}\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/verify-registration",
+            "description": "Brevo’dan kelgan kodni `registrationCode` variable’iga kiriting. Javobdagi accessToken avtomatik ravishda `token` ga saqlanadi."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('OTP tasdiqlash muvaffaqiyatli', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code < 300) { const data = pm.response.json(); if (data.accessToken) pm.collectionVariables.set('token', data.accessToken); }"] } }]
+        },
+        {
+          "name": "Resend registration code",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/resend-registration-code"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/login",
+            "description": "Javobdagi accessToken avtomatik ravishda `token` ga saqlanadi."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Login muvaffaqiyatli', function () { pm.expect(pm.response.code).to.be.within(200, 299); });", "if (pm.response.code < 300) { const data = pm.response.json(); if (data.accessToken) pm.collectionVariables.set('token', data.accessToken); }"] } }]
+        },
+        {
+          "name": "Telegram auth",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"id\": 123456789,\n  \"auth_date\": 1730000000,\n  \"hash\": \"TELEGRAM_WIDGET_HASH\",\n  \"first_name\": \"Test\",\n  \"last_name\": \"User\",\n  \"role\": \"student\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/telegram",
+            "description": "Telegram widget’dan olingan haqiqiy id, auth_date va hash qiymatlarini kiriting."
+          }
+        },
+        {
+          "name": "Get my profile",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/auth/me", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } }
+        },
+        {
+          "name": "Update my profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Yangi Ism\",\n  \"avatarUrl\": \"https://example.com/avatar.png\"\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/auth/me",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        { "name": "List approved courses", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/courses" } },
+        { "name": "Get course by ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/courses/{{courseId}}" } },
+        { "name": "List my courses (teacher/admin)", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/courses/mine", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        {
+          "name": "Create course (teacher/admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman test kursi\",\n  \"description\": \"API orqali yaratilgan test kursi\",\n  \"coverUrl\": \"🌍\",\n  \"isPaid\": false,\n  \"price\": 0,\n  \"sections\": [\n    {\n      \"title\": \"Kurs darslari\",\n      \"lessons\": [\n        { \"title\": \"Kirish\", \"content\": \"Birinchi dars matni\", \"videoUrl\": \"\" }\n      ]\n    }\n  ]\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/courses",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "description": "Teacher yoki admin tokeni kerak. Yaratilgan kurs ID’si avtomatik `courseId` ga yoziladi."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.code < 300) { const data = pm.response.json(); if (data._id) pm.collectionVariables.set('courseId', data._id); }"] } }]
+        },
+        {
+          "name": "Update course (teacher/admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Yangilangan test kursi\",\n  \"description\": \"Tahrirlangan tavsif\",\n  \"coverUrl\": \"🌍\",\n  \"isPaid\": false,\n  \"price\": 0,\n  \"sections\": [\n    { \"title\": \"Kurs darslari\", \"lessons\": [{ \"title\": \"Kirish\", \"content\": \"Yangilangan matn\", \"videoUrl\": \"\" }] }\n  ]\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/courses/{{courseId}}",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }
+          }
+        },
+        { "name": "Request access to paid course (student)", "request": { "method": "POST", "header": [], "url": "{{baseUrl}}/courses/{{courseId}}/request-access", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        {
+          "name": "Save course progress",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"completedLessons\": []\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/courses/{{courseId}}/progress",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] }
+          }
+        },
+        { "name": "Get course progress", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/courses/{{courseId}}/progress", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Delete course (destructive)", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/courses/{{courseId}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } }
+      ]
+    },
+    {
+      "name": "Tests",
+      "item": [
+        { "name": "List published tests", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/tests" } },
+        { "name": "Get test by ID", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/tests/{{testId}}" } },
+        {
+          "name": "Submit test answers",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"answers\": {\n    \"1\": \"A\"\n  }\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/tests/{{testId}}/submit"
+          }
+        },
+        { "name": "List my tests (teacher/admin)", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/tests/mine", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        {
+          "name": "Create test (teacher)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Postman test\",\n  \"level\": \"A1\",\n  \"questions\": [\n    {\n      \"number\": 1,\n      \"question\": \"Salom so‘zining tarjimasi?\",\n      \"options\": { \"A\": \"Hello\", \"B\": \"Goodbye\", \"C\": \"Please\", \"D\": \"Thanks\" },\n      \"answer\": \"A\"\n    }\n  ]\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/tests",
+            "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+            "description": "Teacher tokeni kerak. Javobdagi test ID’si avtomatik `testId` ga saqlanadi."
+          },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["if (pm.response.code < 300) { const data = pm.response.json(); if (data._id) pm.collectionVariables.set('testId', data._id); }"] } }]
+        },
+        { "name": "Get test for editing (teacher/admin)", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/tests/{{testId}}/manage", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Admin list tests", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/tests/manage", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        { "name": "List all courses", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/admin/courses", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "List pending course reviews", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/admin/course-requests", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Approve course", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"approved\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/courses/{{courseId}}/review", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Hide course", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"hidden\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/courses/{{courseId}}/review", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Make course free/paid", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"isPaid\": false\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/courses/{{courseId}}/free", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Delete course (destructive)", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/admin/courses/{{courseId}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "List access requests", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/admin/access-requests", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Approve access request", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"status\": \"approved\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/access-requests/{{requestId}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "List users", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/admin/users", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Change user role", "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"role\": \"teacher\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/users/{{userId}}/role", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Delete user (destructive)", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/admin/users/{{userId}}", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "List admin tests", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/admin/tests", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } },
+        { "name": "Import tests JSON", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"tests\": [\n    {\n      \"title\": \"Turk tili A1 testi\",\n      \"level\": \"A1\",\n      \"questions\": [\n        { \"number\": 1, \"question\": \"Merhaba ne demek?\", \"options\": { \"A\": \"Salom\", \"B\": \"Xayr\", \"C\": \"Rahmat\", \"D\": \"Iltimos\" }, \"answer\": \"A\" }\n      ]\n    }\n  ]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/admin/tests/import", "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] } } }
+      ]
+    }
+  ]
+}
