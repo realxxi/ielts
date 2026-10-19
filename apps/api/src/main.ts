@@ -10,7 +10,8 @@ async function bootstrap() {
   app.use(json({ limit: '10mb' }));
   app.use(urlencoded({ extended: true, limit: '10mb' }));
   app.setGlobalPrefix('api');
-  app.enableCors({ origin: process.env.WEB_ORIGIN?.split(',') || true, credentials: true });
+  const webOrigins = process.env.WEB_ORIGIN?.split(',').map((origin) => origin.trim()).filter(Boolean);
+  app.enableCors({ origin: webOrigins?.length ? webOrigins : true, credentials: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   const config = new DocumentBuilder().setTitle('Tilshunos API').setDescription('Til o‘rganish platformasi REST API').setVersion('1.0').addBearerAuth().build();
   SwaggerModule.setup('api/docs', app, SwaggerModule.createDocument(app, config));
