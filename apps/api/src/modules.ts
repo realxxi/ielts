@@ -22,9 +22,12 @@ export type Role = 'student' | 'teacher' | 'admin';
   @Prop({ required: true, enum: ['student','teacher','admin'], default: 'student' }) role: Role;
   @Prop() name: string;
   @Prop() avatarUrl?: string;
-  @Prop({ unique: true, sparse: true }) telegramId?: string;
+  @Prop() telegramId?: string;
 }
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.index({ telegramId: 1 }, { unique: true, partialFilterExpression: { telegramId: { $type: 'string' } }, name: 'telegramId_1' });
+// User indexes are reconciled explicitly at startup so legacy Atlas indexes can be migrated safely.
+UserSchema.set('autoIndex', false);
 @Schema() export class PendingRegistration {
   @Prop({required:true,unique:true,lowercase:true}) email:string;
   @Prop({required:true}) name:string;
@@ -91,6 +94,17 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
 @Injectable() export class AuthService implements OnModuleInit {
   constructor(@InjectModel(User.name) private users: Model<User>, @InjectModel(PendingRegistration.name) private pending:Model<PendingRegistration>, private jwt: JwtService, private config: ConfigService) {}
   async onModuleInit() {
+    const userIndexes = await this.users.collection.indexes().catch((error: any) => {
+      if (error?.codeName === 'NamespaceNotFound' || error?.code === 26) return [];
+      throw error;
+    });
+    await this.users.collection.createIndex({ email: 1 }, { unique: true, name: 'email_1' });
+    const telegramIndex = userIndexes.find((index: any) => index.key?.telegramId === 1);
+    if (telegramIndex && (!telegramIndex.unique || telegramIndex.partialFilterExpression?.telegramId?.$type !== 'string')) {
+      console.warn(`Migrating legacy user index ${telegramIndex.name} to a partial unique telegramId index.`);
+      await this.users.collection.dropIndex(telegramIndex.name);
+    }
+    await this.users.collection.createIndex({ telegramId: 1 }, { unique: true, partialFilterExpression: { telegramId: { $type: 'string' } }, name: 'telegramId_1' });
     const email = this.config.get('ADMIN_EMAIL'), password = this.config.get('ADMIN_PASSWORD');
     if (!email || !password) return;
     const hash = await bcrypt.hash(password, 12);
