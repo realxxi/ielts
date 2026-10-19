@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { api, saveSession } from '@/lib/api';
 
-declare global { interface Window { google?: any; onTelegramAuth?: (user: Record<string, unknown>) => void } }
+declare global { interface Window { onTelegramAuth?: (user: Record<string, unknown>) => void } }
 
 export default function Register() {
   const router = useRouter();
@@ -14,31 +14,10 @@ export default function Register() {
   const [verificationEmail, setVerificationEmail] = useState('');
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const roleRef = useRef(role);
-  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim() || '';
   const telegramBotName = process.env.NEXT_PUBLIC_TELEGRAM_BOT_NAME?.trim().replace(/^@/, '') || '';
   const validTelegramBotName = /^[a-zA-Z0-9_]{5,32}$/.test(telegramBotName) && telegramBotName.toLowerCase().endsWith('bot');
 
   useEffect(() => { roleRef.current = role; }, [role]);
-  useEffect(() => {
-    if (!googleClientId || verificationEmail) return;
-    let cancelled = false;
-    const initialize = () => {
-      if (cancelled || !window.google?.accounts?.id) return;
-      window.google.accounts.id.initialize({ client_id: googleClientId, callback: async (response: { credential: string }) => {
-        setBusy(true); setError('');
-        try { const result = await api('/auth/google', { method: 'POST', body: JSON.stringify({ credential: response.credential, role: roleRef.current }) }); saveSession(result); router.push('/dashboard'); }
-        catch (e) { setError(e instanceof Error ? e.message : 'Google orqali ro‘yxatdan o‘tib bo‘lmadi'); }
-        finally { setBusy(false); }
-      } });
-      const button = document.getElementById('google-register-button');
-      if (button) window.google.accounts.id.renderButton(button, { theme: 'outline', size: 'large', shape: 'rectangular', text: 'signup_with', width: 350 });
-    };
-    if (window.google?.accounts?.id) initialize();
-    else {
-      const script = document.createElement('script'); script.src = 'https://accounts.google.com/gsi/client'; script.async = true; script.defer = true; script.onload = initialize; document.head.appendChild(script);
-    }
-    return () => { cancelled = true; };
-  }, [googleClientId, verificationEmail, router]);
   useEffect(() => {
     if (!validTelegramBotName || verificationEmail) return;
     const mount = document.getElementById('telegram-register-widget'); if (!mount) return;
@@ -77,9 +56,7 @@ export default function Register() {
     </> : <>
       <p>Hisob turini tanlang va qulay usulda ro‘yxatdan o‘ting.</p>
       <label className="role-picker">Men...<select value={role} onChange={e => setRole(e.target.value as 'student' | 'teacher')}><option value="student">O‘quvchiman — kurslarni o‘rganaman</option><option value="teacher">O‘qituvchiman — kurs yarataman</option></select></label>
-      {googleClientId && <div className="oauth-button" id="google-register-button" />}
       {validTelegramBotName && <div className="oauth-button" id="telegram-register-widget" />}
-      {!googleClientId && <p className="form-note">Google orqali ro‘yxatdan o‘tish hozircha sozlanmagan.</p>}
       {!validTelegramBotName && <p className="form-note">Telegram orqali ro‘yxatdan o‘tish hozircha sozlanmagan.</p>}
       <div className="divider">yoki email bilan</div>
       <form className="form" onSubmit={submitRegistration}>

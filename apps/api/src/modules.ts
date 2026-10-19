@@ -13,6 +13,7 @@ import { createHmac, timingSafeEqual, createHash } from 'crypto';
 import { randomInt } from 'crypto';
 import { IsEmail, IsIn, IsOptional, IsString, MinLength, IsBoolean, IsArray, ValidateNested, IsNumber, IsInt, Min, IsMongoId, ArrayMinSize } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
+import { buildVerificationEmail } from './verification-email';
 
 export type Role = 'student' | 'teacher' | 'admin';
 @Schema({ timestamps: true }) export class User {
@@ -65,7 +66,6 @@ export const TestAttemptSchema=SchemaFactory.createForClass(TestAttempt);
 
 export class RegisterDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail({}, { message: 'To‘g‘ri email manzilini kiriting' }) email: string; @IsString() @MinLength(8, { message: 'Parol kamida 8 belgidan iborat bo‘lsin' }) password: string; @Transform(({value}) => typeof value === 'string' ? value.trim() : value) @IsString() @MinLength(2, { message: 'Ism kamida 2 belgidan iborat bo‘lsin' }) name: string; @IsIn(['student','teacher']) role: Role; }
 export class LoginDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail({}, { message: 'To‘g‘ri email manzilini kiriting' }) email: string; @IsString() password: string; }
-export class GoogleAuthDto { @IsString() credential: string; @IsIn(['student','teacher']) @IsOptional() role?: Role; }
 export class VerifyRegistrationDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail() email:string; @IsString() @MinLength(6) code:string; }
 export class RegistrationEmailDto { @Transform(({value}) => typeof value === 'string' ? value.trim().toLowerCase() : value) @IsEmail() email:string; }
 export class UpdateProfileDto { @IsString() @MinLength(2) name: string; @IsString() @IsOptional() avatarUrl?: string; }
@@ -105,9 +105,8 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
     const senderEmail=this.config.get<string>('BREVO_SENDER_EMAIL')?.trim();
     const senderName=this.config.get<string>('BREVO_SENDER_NAME')?.trim()||'Tilshunos';
     if(!apiKey||!senderEmail)throw new ServiceUnavailableException('Brevo orqali email yuborish sozlanmagan. Server administratoriga murojaat qiling.');
-    const textContent=`Ro‘yxatdan o‘tishni yakunlash uchun tasdiqlash kodingiz: ${code}\n\nKod 10 daqiqa amal qiladi. Agar bu so‘rov sizniki bo‘lmasa, xabarni e’tiborsiz qoldiring.`;
-    const htmlContent=`<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto;padding:28px;color:#18251e"><h2>Tilshunos email tasdiqlash</h2><p>Ro‘yxatdan o‘tishni yakunlash uchun ushbu kodni kiriting:</p><p style="font-size:32px;font-weight:bold;letter-spacing:8px;color:#245a3d">${code}</p><p>Kod 10 daqiqa amal qiladi.</p><small>Agar bu so‘rov sizniki bo‘lmasa, xabarni e’tiborsiz qoldiring.</small></div>`;
-    const response=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{accept:'application/json','api-key':apiKey,'content-type':'application/json'},body:JSON.stringify({sender:{name:senderName,email:senderEmail},to:[{email}],subject:'Tilshunos — email tasdiqlash kodi',textContent,htmlContent})});
+    const {subject,htmlContent,textContent}=buildVerificationEmail(code);
+    const response=await fetch('https://api.brevo.com/v3/smtp/email',{method:'POST',headers:{accept:'application/json','api-key':apiKey,'content-type':'application/json'},body:JSON.stringify({sender:{name:senderName,email:senderEmail},to:[{email}],subject,textContent,htmlContent})});
     if(!response.ok){const details=await response.text().catch(()=> '');console.error('Brevo email delivery failed:',response.status,details);throw new Error('Brevo email delivery failed');}
   }
   private async createAndSendCode(data:{email:string;name:string;role:Role;passwordHash:string}){const email=data.email;if(await this.users.exists({email}))throw new ConflictException('Bu email bilan akkaunt mavjud. Kirish sahifasidan kiring.');const previous=await this.pending.findOne({email});if(previous&&Date.now()-previous.sentAt.getTime()<60_000)throw new HttpException('Yangi kod so‘rashdan oldin 1 daqiqa kuting.',429);const code=String(randomInt(100000,1_000_000));await this.pending.findOneAndUpdate({email},{$set:{...data,codeHash:this.emailCodeHash(code),sentAt:new Date(),expiresAt:new Date(Date.now()+10*60_000),attempts:0}},{upsert:true,new:true,setDefaultsOnInsert:true});try{await this.sendRegistrationCode(email,code);}catch(error){await this.pending.deleteOne({email});console.error('Registration email delivery failed:',error);throw new ServiceUnavailableException('Tasdiqlash xati yuborilmadi. Brevo API kaliti va tasdiqlangan jo‘natuvchi emailini tekshiring.');}return{verificationRequired:true,email};}
@@ -115,19 +114,6 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
   async resendRegistrationCode(dto:RegistrationEmailDto){const email=dto.email.trim().toLowerCase();const pending=await this.pending.findOne({email});if(!pending)throw new NotFoundException('Tasdiqlash uchun kutilayotgan ro‘yxatdan o‘tish topilmadi. Formani qayta yuboring.');return this.createAndSendCode({email,name:pending.name,role:pending.role,passwordHash:pending.passwordHash});}
   async verifyRegistration(dto:VerifyRegistrationDto){const email=dto.email.trim().toLowerCase(),pending=await this.pending.findOne({email,expiresAt:{$gt:new Date()}});if(!pending)throw new BadRequestException('Tasdiqlash kodi eskirgan yoki topilmadi. Yangi kod so‘rang.');if(pending.attempts>=5){await this.pending.deleteOne({_id:pending._id});throw new BadRequestException('Urinishlar soni tugadi. Ro‘yxatdan o‘tishni qaytadan boshlang.');}if(this.emailCodeHash(dto.code)!==pending.codeHash){pending.attempts+=1;await pending.save();throw new UnauthorizedException('Tasdiqlash kodi noto‘g‘ri.');}let user:any;try{user=await this.users.create({email:pending.email,passwordHash:pending.passwordHash,name:pending.name,role:pending.role});}catch(error:any){if(error?.code===11000)throw new ConflictException('Bu email bilan akkaunt mavjud. Kirish sahifasidan kiring.');throw error;}await this.pending.deleteOne({_id:pending._id});return this.token(user);}
   async login(dto: LoginDto) { const user = await this.users.findOne({ email: dto.email.trim().toLowerCase() }); if (!user?.passwordHash || !await bcrypt.compare(dto.password, user.passwordHash)) throw new UnauthorizedException('Email yoki parol noto‘g‘ri'); return this.token(user); }
-  async google(credential: string, role: Role = 'student') {
-    const clientId = this.config.get<string>('GOOGLE_CLIENT_ID')?.trim();
-    if (!clientId) throw new ServiceUnavailableException('Google orqali kirish sozlanmagan.');
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`);
-    if (!response.ok) throw new UnauthorizedException('Google hisobini tasdiqlab bo‘lmadi.');
-    const claims: any = await response.json();
-    if (claims.aud !== clientId || !['https://accounts.google.com', 'accounts.google.com'].includes(claims.iss) || claims.email_verified !== 'true' || !claims.email) throw new UnauthorizedException('Google hisob ma’lumotlari yaroqsiz.');
-    const email = String(claims.email).trim().toLowerCase();
-    let user: any = await this.users.findOne({ email });
-    if (!user) user = await this.users.create({ email, name: claims.name || email.split('@')[0], avatarUrl: claims.picture, role });
-    else if (!user.avatarUrl && claims.picture) { user.avatarUrl = claims.picture; await user.save(); }
-    return this.token(user);
-  }
   async telegram(payload: TelegramDto) {
     const botToken = this.config.get('TELEGRAM_BOT_TOKEN'); if (!botToken) throw new BadRequestException('Telegram login sozlanmagan');
     const { hash, ...fields } = payload; const data = Object.entries(fields).filter(([k,v]) => k !== 'role' && v !== undefined).sort(([a],[b]) => a.localeCompare(b)).map(([k,v]) => `${k}=${v}`).join('\n');
@@ -145,7 +131,6 @@ export function allow(...roles: Role[]) { return (target: any, key: string, desc
  @Post('verify-registration') verifyRegistration(@Body() dto:VerifyRegistrationDto){return this.auth.verifyRegistration(dto);}
  @Post('resend-registration-code') resendRegistrationCode(@Body() dto:RegistrationEmailDto){return this.auth.resendRegistrationCode(dto);}
  @Post('login') login(@Body() dto: LoginDto) { return this.auth.login(dto); }
- @Post('google') google(@Body() dto: GoogleAuthDto) { return this.auth.google(dto.credential, dto.role); }
  @Post('telegram') telegram(@Body() dto: TelegramDto) { return this.auth.telegram(dto); }
  @Get('me') @UseGuards(JwtAuth) @ApiBearerAuth() me(@Req() req: any) { return this.auth.getProfile(req.user.id); }
  @Patch('me') @UseGuards(JwtAuth) @ApiBearerAuth() updateMe(@Req() req: any, @Body() dto: UpdateProfileDto) { return this.auth.updateProfile(req.user.id, dto); }
