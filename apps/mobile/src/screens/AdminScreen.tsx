@@ -87,7 +87,10 @@ export default function AdminScreen() {
   function renderItem({ item }: { item: Course | CourseAccessRequest | Test | AdminUser }) {
     if (tab === 'courses') {
       const course = item as Course;
-      return <Card><Text style={styles.rowTitle}>{course.title}</Text><Text style={styles.detail}>{course.description}</Text><Text style={styles.detail}>{course.teacherId && typeof course.teacherId === 'object' ? course.teacherId.name || 'O‘qituvchi' : 'O‘qituvchi'} · {course.isPaid ? `${course.price || 0} so‘m` : 'Bepul'}</Text><View style={styles.actions}>
+      return <Card><Text style={styles.rowTitle}>{course.title}</Text><Text style={styles.detail}>{course.description}</Text><Text style={styles.detail}>{course.teacherId && typeof course.teacherId === 'object' ? course.teacherId.name || 'O‘qituvchi' : 'O‘qituvchi'} · {course.isPaid ? `${course.price || 0} so‘m` : 'Bepul'} · {statusLabel(course.status)}</Text><View style={styles.actions}>
+        <Action title="Nashr qilish" onPress={() => action(`/admin/courses/${course._id}/review`, 'PATCH', { status: 'approved' })} />
+        <Action title="Yashirish" onPress={() => action(`/admin/courses/${course._id}/review`, 'PATCH', { status: 'hidden' })} />
+        <Action danger title="Rad etish" onPress={() => action(`/admin/courses/${course._id}/review`, 'PATCH', { status: 'rejected' })} />
         <Action title={course.isPaid ? 'Bepul qilish' : 'Obunali qilish'} onPress={() => action(`/admin/courses/${course._id}/free`, 'PATCH', { isPaid: !course.isPaid })} />
         <Action title="Prezentatsiya +" onPress={() => addPresentation(course)} />
         <Action danger title="O‘chirish" onPress={() => confirmDelete(course.title, () => action(`/admin/courses/${course._id}`, 'DELETE', undefined, 'Kurs o‘chirildi.'))} />
@@ -140,6 +143,7 @@ function Action({ title, onPress, danger = false, selected = false }: { title: s
   return <Pressable onPress={onPress} style={[styles.action, selected && styles.selectedAction, danger && styles.dangerAction]}><Text style={[styles.actionText, selected && styles.selectedActionText, danger && styles.dangerText]}>{title}</Text></Pressable>;
 }
 function roleLabel(role: AdminUser['role']) { return role === 'student' ? 'O‘quvchi' : role === 'teacher' ? 'O‘qituvchi' : 'Admin'; }
+function statusLabel(status: Course['status']) { return status === 'approved' ? 'Nashr qilingan' : status === 'pending' ? 'Ko‘rib chiqilmoqda' : status === 'hidden' ? 'Yashirilgan' : status === 'rejected' ? 'Rad etilgan' : 'Noma’lum'; }
 function emptyTitle(tab: AdminTab) { return tab === 'review' ? 'Tasdiqlash uchun kurslar yo‘q' : tab === 'access' ? 'Kirish so‘rovlari yo‘q' : tab === 'tests' ? 'Testlar yo‘q' : tab === 'users' ? 'Foydalanuvchilar topilmadi' : 'Kurslar topilmadi'; }
 
 const styles = StyleSheet.create({
