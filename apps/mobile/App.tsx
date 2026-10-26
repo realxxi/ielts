@@ -10,6 +10,7 @@ import { getStoredSession, clearSession, type Session } from './src/lib/session'
 import { LoginScreen, RegisterScreen, type AuthRoutes } from './src/screens/AuthScreens';
 import type { CourseRoutes, TestRoutes } from './src/types';
 import CourseCatalogScreen from './src/screens/CourseCatalogScreen';
+import CourseDetailScreen from './src/screens/CourseDetailScreen';
 
 type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
 const Auth = createNativeStackNavigator<AuthRoutes>();
@@ -40,15 +41,15 @@ function RoleTabs({ session }: { session: Session }) {
   const admin = session.user.role === 'admin';
   return <TabsNavigatorView screenOptions={{ headerShown: false }}>
     <Tabs.Screen name="Home" options={{ title: 'Asosiy' }}>{() => <Placeholder title={`Salom, ${session.user.name || 'do‘st'}`} />}</Tabs.Screen>
-    <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator />}</Tabs.Screen>
+    <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator role={session.user.role} />}</Tabs.Screen>
     <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <TestNavigator />}</Tabs.Screen>
     {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => <Placeholder title={admin ? 'Admin boshqaruvi' : 'O‘qituvchi kabineti'} />}</Tabs.Screen>}
     <Tabs.Screen name="Profile" options={{ title: 'Profil' }}>{() => <Placeholder title="Profil" />}</Tabs.Screen>
   </TabsNavigatorView>;
 }
 
-function CourseNavigator() {
-  return <CourseStackView><CourseStack.Screen name="Catalog" options={{ title: 'Kurslar' }} component={CourseCatalogScreen} /><CourseStack.Screen name="Detail">{() => <Placeholder title="Kurs" />}</CourseStack.Screen></CourseStackView>;
+function CourseNavigator({ role }: { role: Session['user']['role'] }) {
+  return <CourseStackView><CourseStack.Screen name="Catalog" options={{ title: 'Kurslar' }} component={CourseCatalogScreen} /><CourseStack.Screen name="Detail" options={{ title: 'Kurs tafsiloti' }}>{(props) => <CourseDetailScreen {...props} role={role} />}</CourseStack.Screen></CourseStackView>;
 }
 
 function TestNavigator() {
