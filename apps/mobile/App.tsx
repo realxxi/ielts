@@ -13,6 +13,7 @@ import CourseCatalogScreen from './src/screens/CourseCatalogScreen';
 import CourseDetailScreen from './src/screens/CourseDetailScreen';
 import TestCatalogScreen from './src/screens/TestCatalogScreen';
 import TestTakeScreen from './src/screens/TestTakeScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
 type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
 const Auth = createNativeStackNavigator<AuthRoutes>();
@@ -38,7 +39,7 @@ function AuthNavigator({ onAuthenticated }: { onAuthenticated: (session: Session
   </AuthNavigatorView>;
 }
 
-function RoleTabs({ session }: { session: Session }) {
+function RoleTabs({ session, onLogout }: { session: Session; onLogout: () => void }) {
   const teacher = session.user.role === 'teacher';
   const admin = session.user.role === 'admin';
   return <TabsNavigatorView screenOptions={{ headerShown: false }}>
@@ -46,7 +47,7 @@ function RoleTabs({ session }: { session: Session }) {
     <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator role={session.user.role} />}</Tabs.Screen>
     <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <TestNavigator />}</Tabs.Screen>
     {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => <Placeholder title={admin ? 'Admin boshqaruvi' : 'O‘qituvchi kabineti'} />}</Tabs.Screen>}
-    <Tabs.Screen name="Profile" options={{ title: 'Profil' }}>{() => <Placeholder title="Profil" />}</Tabs.Screen>
+    <Tabs.Screen name="Profile" options={{ title: 'Profil' }}>{() => <ProfileScreen session={session} onLogout={onLogout} />}</Tabs.Screen>
   </TabsNavigatorView>;
 }
 
@@ -76,7 +77,7 @@ export default function App() {
 
   if (!ready) return <View style={styles.loading}><ActivityIndicator size="large" color="#1b6d48" /></View>;
   return <SafeAreaProvider><StatusBar style="dark" /><NavigationRoot key={session?.user.role || 'guest'}>
-    {session ? <RoleTabs session={session} /> : <AuthNavigator onAuthenticated={setSession} />}
+    {session ? <RoleTabs session={session} onLogout={async () => { await clearSession(); setSession(null); }} /> : <AuthNavigator onAuthenticated={setSession} />}
   </NavigationRoot></SafeAreaProvider>;
 }
 
