@@ -10,13 +10,19 @@ import { getStoredSession, clearSession, type Session } from './src/lib/session'
 import { LoginScreen, RegisterScreen, type AuthRoutes } from './src/screens/AuthScreens';
 
 type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
+export type CourseRoutes = { Catalog: undefined; Detail: { id: string } };
+export type TestRoutes = { Catalog: undefined; Take: { id: string } };
 const Auth = createNativeStackNavigator<AuthRoutes>();
 const Tabs = createBottomTabNavigator<AppRoutes>();
+const CourseStack = createNativeStackNavigator<CourseRoutes>();
+const TestStack = createNativeStackNavigator<TestRoutes>();
 // React Navigation resolves React types through hoisted workspace packages; cast
 // its runtime navigator components to the app's React 18 component type.
 const AuthNavigatorView = Auth.Navigator as unknown as ComponentType<any>;
 const TabsNavigatorView = Tabs.Navigator as unknown as ComponentType<any>;
 const NavigationRoot = NavigationContainer as unknown as ComponentType<any>;
+const CourseStackView = CourseStack.Navigator as unknown as ComponentType<any>;
+const TestStackView = TestStack.Navigator as unknown as ComponentType<any>;
 
 function Placeholder({ title }: { title: string }) {
   return <View style={styles.screen}><Text style={styles.title}>{title}</Text><Text style={styles.copy}>Bu bo‘lim keyingi bosqichlarda tayyorlanadi.</Text></View>;
@@ -34,11 +40,19 @@ function RoleTabs({ session }: { session: Session }) {
   const admin = session.user.role === 'admin';
   return <TabsNavigatorView screenOptions={{ headerShown: false }}>
     <Tabs.Screen name="Home" options={{ title: 'Asosiy' }}>{() => <Placeholder title={`Salom, ${session.user.name || 'do‘st'}`} />}</Tabs.Screen>
-    <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <Placeholder title="Kurslar" />}</Tabs.Screen>
-    <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <Placeholder title="Testlar" />}</Tabs.Screen>
+    <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator />}</Tabs.Screen>
+    <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <TestNavigator />}</Tabs.Screen>
     {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => <Placeholder title={admin ? 'Admin boshqaruvi' : 'O‘qituvchi kabineti'} />}</Tabs.Screen>}
     <Tabs.Screen name="Profile" options={{ title: 'Profil' }}>{() => <Placeholder title="Profil" />}</Tabs.Screen>
   </TabsNavigatorView>;
+}
+
+function CourseNavigator() {
+  return <CourseStackView><CourseStack.Screen name="Catalog">{() => <Placeholder title="Kurslar" />}</CourseStack.Screen><CourseStack.Screen name="Detail">{({ route }: { route: { params: { id: string } } }) => <Placeholder title="Kurs" />}</CourseStack.Screen></CourseStackView>;
+}
+
+function TestNavigator() {
+  return <TestStackView><TestStack.Screen name="Catalog">{() => <Placeholder title="Testlar" />}</TestStack.Screen><TestStack.Screen name="Take">{({ route }: { route: { params: { id: string } } }) => <Placeholder title="Test" />}</TestStack.Screen></TestStackView>;
 }
 
 export default function App() {
