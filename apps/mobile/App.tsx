@@ -11,6 +11,7 @@ import { LoginScreen, RegisterScreen, type AuthRoutes } from './src/screens/Auth
 import type { CourseRoutes, TestRoutes } from './src/types';
 import CourseCatalogScreen from './src/screens/CourseCatalogScreen';
 import CourseDetailScreen from './src/screens/CourseDetailScreen';
+import TestCatalogScreen from './src/screens/TestCatalogScreen';
 
 type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
 const Auth = createNativeStackNavigator<AuthRoutes>();
@@ -53,7 +54,7 @@ function CourseNavigator({ role }: { role: Session['user']['role'] }) {
 }
 
 function TestNavigator() {
-  return <TestStackView><TestStack.Screen name="Catalog">{() => <Placeholder title="Testlar" />}</TestStack.Screen><TestStack.Screen name="Take">{({ route }: { route: { params: { id: string } } }) => <Placeholder title="Test" />}</TestStack.Screen></TestStackView>;
+  return <TestStackView><TestStack.Screen name="Catalog" options={{ title: 'Testlar' }} component={TestCatalogScreen} /><TestStack.Screen name="Take">{() => <Placeholder title="Test'ni ishlash" />}</TestStack.Screen></TestStackView>;
 }
 
 export default function App() {
