@@ -4,13 +4,15 @@ import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { AppButton, AppInput, Card, EmptyState, Feedback, palette, ScreenTitle } from '../components/ui';
 import { api } from '../lib/api';
+import type { Session } from '../lib/session';
 import type { Course } from '../types';
 
 type LessonDraft = { title: string; videoUrl: string; content: string };
 type SlideDraft = { name: string; dataUrl: string };
 const blankLesson = (): LessonDraft => ({ title: '', videoUrl: '', content: '' });
 
-export default function TeacherCoursesScreen() {
+export default function TeacherCoursesScreen({ role = 'teacher' }: { role?: Session['user']['role'] }) {
+  const isAdmin = role === 'admin';
   const [courses, setCourses] = useState<Course[]>([]);
   const [editing, setEditing] = useState<Course | null>(null);
   const [title, setTitle] = useState('');
@@ -70,7 +72,7 @@ export default function TeacherCoursesScreen() {
       const payload: Record<string, unknown> = { title: title.trim(), description: description.trim(), coverUrl: coverUrl.trim(), isPaid, price: Number(price || 0), sections: [{ title: 'Kurs darslari', lessons: validLessons }] };
       if (slides.length) payload.slides = slides;
       await api(editing ? `/courses/${editing._id}` : '/courses', { method: editing ? 'PATCH' : 'POST', body: JSON.stringify(payload) });
-      setNotice(editing ? 'Kurs yangilandi va qayta ko‘rib chiqishga yuborildi.' : 'Kurs adminga ko‘rib chiqish uchun yuborildi.');
+      setNotice(isAdmin ? (editing ? 'Kurs yangilandi va katalogda nashr qilindi.' : 'Kurs yaratildi va katalogda nashr qilindi.') : (editing ? 'Kurs yangilandi va qayta ko‘rib chiqishga yuborildi.' : 'Kurs adminga ko‘rib chiqish uchun yuborildi.'));
       resetForm();
       await loadCourses();
     } catch (err) { setError(err instanceof Error ? err.message : 'Kursni saqlab bo‘lmadi.'); }
@@ -89,7 +91,7 @@ export default function TeacherCoursesScreen() {
   }
 
   const header = <>
-    <ScreenTitle title={editing ? 'Kursni tahrirlash' : 'Kurslarim'} subtitle="Kurs yarating, tahrirlang va moderatsiya holatini kuzating." />
+    <ScreenTitle title={editing ? 'Kursni tahrirlash' : isAdmin ? 'Kurslar' : 'Kurslarim'} subtitle={isAdmin ? 'Kurs yarating, tahrirlang va katalog holatini boshqaring.' : 'Kurs yarating, tahrirlang va moderatsiya holatini kuzating.'} />
     <Feedback message={error} />
     <Feedback message={notice} variant="success" />
     <Card style={styles.formCard}>
@@ -111,7 +113,7 @@ export default function TeacherCoursesScreen() {
       <AppButton title="+ Dars qo‘shish" variant="secondary" onPress={() => setLessons((current) => [...current, blankLesson()])} />
       <View style={styles.slidesRow}><Text style={styles.label}>PDF slaydlar (jami 5 MB gacha)</Text><AppButton title="PDF tanlash" variant="secondary" onPress={pickSlides} /></View>
       {slides.map((slide, index) => <Text key={`${slide.name}-${index}`} style={styles.fileName}>✓ {slide.name}</Text>)}
-      <AppButton title={editing ? 'Saqlash va qayta yuborish' : 'Tasdiqqa yuborish'} loading={busy} disabled={title.trim().length < 2 || description.trim().length < 1} onPress={saveCourse} />
+      <AppButton title={isAdmin ? editing ? 'Saqlash va nashr qilish' : 'Yaratish va nashr qilish' : editing ? 'Saqlash va qayta yuborish' : 'Tasdiqqa yuborish'} loading={busy} disabled={title.trim().length < 2 || description.trim().length < 1} onPress={saveCourse} />
       {editing ? <View style={styles.cancel}><AppButton title="Tahrirlashni bekor qilish" variant="secondary" onPress={resetForm} /></View> : null}
     </Card>
     <Text style={styles.listTitle}>Yaratilgan kurslar</Text>
