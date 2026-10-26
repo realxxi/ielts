@@ -10,9 +10,9 @@ import { api } from '../lib/api';
 import type { Course, CourseProgress, CourseRoutes } from '../types';
 const NativeWebView = WebView as unknown as ComponentType<any>;
 
-type Props = NativeStackScreenProps<CourseRoutes, 'Detail'> & { role: 'student' | 'teacher' | 'admin' };
+type Props = NativeStackScreenProps<CourseRoutes, 'Detail'> & { role: 'student' | 'teacher' | 'admin'; authenticated: boolean };
 
-export default function CourseDetailScreen({ route, role }: Props) {
+export default function CourseDetailScreen({ route, role, authenticated }: Props) {
   const { id } = route.params;
   const [course, setCourse] = useState<Course | null>(null);
   const [completed, setCompleted] = useState<string[]>([]);
@@ -29,7 +29,7 @@ export default function CourseDetailScreen({ route, role }: Props) {
     try {
       const result = await api<Course>(`/courses/${id}`);
       setCourse(result);
-      if (!result.locked) {
+      if (!result.locked && authenticated) {
         try {
           const progress = await api<CourseProgress>(`/courses/${id}/progress`);
           setCompleted(progress.completedLessons || []);
@@ -42,7 +42,7 @@ export default function CourseDetailScreen({ route, role }: Props) {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, authenticated]);
 
   useFocusEffect(useCallback(() => { void loadCourse(); }, [loadCourse]));
 
@@ -50,6 +50,10 @@ export default function CourseDetailScreen({ route, role }: Props) {
   const percentage = lessons.length ? Math.round(completed.length * 100 / lessons.length) : 0;
 
   async function requestAccess() {
+    if (!authenticated) {
+      setError('Kirish so‘rovi yuborish uchun ilovaning “Kirish” bo‘limiga o‘ting.');
+      return;
+    }
     setBusy(true);
     setError('');
     setNotice('');
@@ -64,6 +68,10 @@ export default function CourseDetailScreen({ route, role }: Props) {
   }
 
   async function toggleLesson(lessonId: string) {
+    if (!authenticated) {
+      setError('O‘qish jarayonini saqlash uchun tizimga kiring.');
+      return;
+    }
     const next = completed.includes(lessonId) ? completed.filter((idValue) => idValue !== lessonId) : [...completed, lessonId];
     const previous = completed;
     setCompleted(next);
@@ -108,7 +116,8 @@ export default function CourseDetailScreen({ route, role }: Props) {
       {course.locked ? <Card style={styles.lockedCard}>
         <Text style={styles.sectionTitle}>Kursga kirish yopiq</Text>
         <Text style={styles.muted}>Kirish so‘rovi yuboring. Admin tasdiqlagach darslar ochiladi.</Text>
-        {role === 'student' ? <AppButton title="Kirish so‘rovini yuborish" onPress={requestAccess} loading={busy} /> : null}
+        {role === 'student' && authenticated ? <AppButton title="Kirish so‘rovini yuborish" onPress={requestAccess} loading={busy} /> : null}
+        {role === 'student' && !authenticated ? <Text style={styles.muted}>So‘rov yuborish uchun pastdagi “Kirish” bo‘limiga o‘ting.</Text> : null}
       </Card> : <>
         {!!course.presentations?.length && <View style={styles.section}>
           <Text style={styles.sectionTitle}>Kurs prezentatsiyalari</Text>

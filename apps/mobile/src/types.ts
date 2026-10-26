@@ -21,3 +21,4 @@ export type TestDraftQuestion = TestQuestion & { answer: TestOption };
 
 export type AdminUser = { _id: string; name?: string; email: string; role: 'student' | 'teacher' | 'admin' };
 export type MainTabRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
+export type GuestTabRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Login: undefined };

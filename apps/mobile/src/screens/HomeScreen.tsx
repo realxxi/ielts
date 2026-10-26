@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
-import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { AppScreen, Card, Feedback, palette, ScreenTitle } from '../components/ui';
 import { api } from '../lib/api';
 import type { Session } from '../lib/session';
-import type { Course, MainTabRoutes, Test } from '../types';
+import type { Course, Test } from '../types';
 
-type Props = BottomTabScreenProps<MainTabRoutes, 'Home'> & { session: Session };
+type HomeNavigation = { navigate: (name: 'Courses' | 'Tests' | 'Manage') => void };
+type Props = { navigation: HomeNavigation; session?: Session | null };
 
 export default function HomeScreen({ navigation, session }: Props) {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -29,13 +29,13 @@ export default function HomeScreen({ navigation, session }: Props) {
 
   useEffect(() => { void loadContent(); }, [loadContent]);
 
-  const firstName = session.user.name?.trim().split(/\s+/)[0] || 'do‘st';
-  const isTeacher = session.user.role === 'teacher';
-  const isAdmin = session.user.role === 'admin';
+  const firstName = session?.user.name?.trim().split(/\s+/)[0] || 'do‘st';
+  const isTeacher = session?.user.role === 'teacher';
+  const isAdmin = session?.user.role === 'admin';
 
   return <AppScreen style={styles.screen}>
     <ScrollView contentContainerStyle={styles.content} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => loadContent(true)} tintColor={palette.green} />}>
-      <Text style={styles.eyebrow}>SHAXSIY KABINET · {isAdmin ? 'ADMIN' : isTeacher ? 'O‘QITUVCHI' : 'O‘QUVCHI'}</Text>
+      <Text style={styles.eyebrow}>{session ? `SHAXSIY KABINET · ${isAdmin ? 'ADMIN' : isTeacher ? 'O‘QITUVCHI' : 'O‘QUVCHI'}` : 'O‘RGANISHNING YANGI USULI'}</Text>
       <ScreenTitle title={`Salom, ${firstName}.`} subtitle={isAdmin ? 'Platforma boshqaruviga xush kelibsiz.' : isTeacher ? 'Bilimingizni ulashing va yangi kurslar yarating.' : 'Har bir dars sizni maqsadingizga yaqinlashtiradi.'} />
       <Card style={styles.heroCard}>
         <Text style={styles.heroTag}>BUGUNGI KICHIK QADAM</Text>
