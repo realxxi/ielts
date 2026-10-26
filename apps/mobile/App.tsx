@@ -8,16 +8,16 @@ import { StatusBar } from 'expo-status-bar';
 import { ApiError, configureUnauthorizedHandler } from './src/lib/api';
 import { getStoredSession, clearSession, type Session } from './src/lib/session';
 import { LoginScreen, RegisterScreen, type AuthRoutes } from './src/screens/AuthScreens';
-import type { CourseRoutes, TestRoutes } from './src/types';
+import type { CourseRoutes, MainTabRoutes, TestRoutes } from './src/types';
 import CourseCatalogScreen from './src/screens/CourseCatalogScreen';
 import CourseDetailScreen from './src/screens/CourseDetailScreen';
 import TestCatalogScreen from './src/screens/TestCatalogScreen';
 import TestTakeScreen from './src/screens/TestTakeScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
+import HomeScreen from './src/screens/HomeScreen';
 
-type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
 const Auth = createNativeStackNavigator<AuthRoutes>();
-const Tabs = createBottomTabNavigator<AppRoutes>();
+const Tabs = createBottomTabNavigator<MainTabRoutes>();
 const CourseStack = createNativeStackNavigator<CourseRoutes>();
 const TestStack = createNativeStackNavigator<TestRoutes>();
 // React Navigation resolves React types through hoisted workspace packages; cast
@@ -43,7 +43,7 @@ function RoleTabs({ session, onLogout }: { session: Session; onLogout: () => voi
   const teacher = session.user.role === 'teacher';
   const admin = session.user.role === 'admin';
   return <TabsNavigatorView screenOptions={{ headerShown: false }}>
-    <Tabs.Screen name="Home" options={{ title: 'Asosiy' }}>{() => <Placeholder title={`Salom, ${session.user.name || 'do‘st'}`} />}</Tabs.Screen>
+    <Tabs.Screen name="Home" options={{ title: 'Asosiy' }}>{(props) => <HomeScreen {...props} session={session} />}</Tabs.Screen>
     <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator role={session.user.role} />}</Tabs.Screen>
     <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <TestNavigator />}</Tabs.Screen>
     {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => <Placeholder title={admin ? 'Admin boshqaruvi' : 'O‘qituvchi kabineti'} />}</Tabs.Screen>}

@@ -20,3 +20,4 @@ export type TestRoutes = { Catalog: undefined; Take: { id: string } };
 export type TestDraftQuestion = TestQuestion & { answer: TestOption };
 
 export type AdminUser = { _id: string; name?: string; email: string; role: 'student' | 'teacher' | 'admin' };
+export type MainTabRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
