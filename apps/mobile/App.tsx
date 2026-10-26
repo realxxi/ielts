@@ -15,6 +15,7 @@ import TestCatalogScreen from './src/screens/TestCatalogScreen';
 import TestTakeScreen from './src/screens/TestTakeScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import HomeScreen from './src/screens/HomeScreen';
+import TeacherManagementScreen from './src/screens/TeacherManagementScreen';
 
 const Auth = createNativeStackNavigator<AuthRoutes>();
 const Tabs = createBottomTabNavigator<MainTabRoutes>();
@@ -46,7 +47,7 @@ function RoleTabs({ session, onLogout }: { session: Session; onLogout: () => voi
     <Tabs.Screen name="Home" options={{ title: 'Asosiy' }}>{(props) => <HomeScreen {...props} session={session} />}</Tabs.Screen>
     <Tabs.Screen name="Courses" options={{ title: 'Kurslar' }}>{() => <CourseNavigator role={session.user.role} />}</Tabs.Screen>
     <Tabs.Screen name="Tests" options={{ title: 'Testlar' }}>{() => <TestNavigator />}</Tabs.Screen>
-    {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => <Placeholder title={admin ? 'Admin boshqaruvi' : 'O‘qituvchi kabineti'} />}</Tabs.Screen>}
+    {(teacher || admin) && <Tabs.Screen name="Manage" options={{ title: 'Boshqaruv' }}>{() => teacher ? <TeacherManagementScreen /> : <Placeholder title="Admin boshqaruvi" />}</Tabs.Screen>}
     <Tabs.Screen name="Profile" options={{ title: 'Profil' }}>{() => <ProfileScreen session={session} onLogout={onLogout} />}</Tabs.Screen>
   </TabsNavigatorView>;
 }
