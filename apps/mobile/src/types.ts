@@ -8,6 +8,7 @@ export type Course = {
   presentations?: { _id?: string; title: string; html: string }[];
 };
 export type CourseProgress = { completedLessons: string[] };
+export type CourseRoutes = { Catalog: undefined; Detail: { id: string } };
 export type CourseAccessRequest = { _id: string; status: 'pending' | 'approved' | 'rejected'; courseId?: Course; userId?: { _id: string; name: string; email: string } };
 
 export type TestOption = 'A' | 'B' | 'C' | 'D';
@@ -15,6 +16,7 @@ export type TestQuestion = { number: number; question: string; options: Record<T
 export type TestQuestionResult = { number: number; selected: TestOption | null; correctAnswer: TestOption; correct: boolean };
 export type Test = { _id: string; title: string; level: string; questionCount?: number; questions?: TestQuestion[] };
 export type TestResult = { score: number; total: number; percentage: number; results: TestQuestionResult[] };
+export type TestRoutes = { Catalog: undefined; Take: { id: string } };
 export type TestDraftQuestion = TestQuestion & { answer: TestOption };
 
 export type AdminUser = { _id: string; name?: string; email: string; role: 'student' | 'teacher' | 'admin' };

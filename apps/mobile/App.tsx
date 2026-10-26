@@ -8,10 +8,10 @@ import { StatusBar } from 'expo-status-bar';
 import { ApiError, configureUnauthorizedHandler } from './src/lib/api';
 import { getStoredSession, clearSession, type Session } from './src/lib/session';
 import { LoginScreen, RegisterScreen, type AuthRoutes } from './src/screens/AuthScreens';
+import type { CourseRoutes, TestRoutes } from './src/types';
+import CourseCatalogScreen from './src/screens/CourseCatalogScreen';
 
 type AppRoutes = { Home: undefined; Courses: undefined; Tests: undefined; Profile: undefined; Manage: undefined };
-export type CourseRoutes = { Catalog: undefined; Detail: { id: string } };
-export type TestRoutes = { Catalog: undefined; Take: { id: string } };
 const Auth = createNativeStackNavigator<AuthRoutes>();
 const Tabs = createBottomTabNavigator<AppRoutes>();
 const CourseStack = createNativeStackNavigator<CourseRoutes>();
@@ -48,7 +48,7 @@ function RoleTabs({ session }: { session: Session }) {
 }
 
 function CourseNavigator() {
-  return <CourseStackView><CourseStack.Screen name="Catalog">{() => <Placeholder title="Kurslar" />}</CourseStack.Screen><CourseStack.Screen name="Detail">{({ route }: { route: { params: { id: string } } }) => <Placeholder title="Kurs" />}</CourseStack.Screen></CourseStackView>;
+  return <CourseStackView><CourseStack.Screen name="Catalog" options={{ title: 'Kurslar' }} component={CourseCatalogScreen} /><CourseStack.Screen name="Detail">{() => <Placeholder title="Kurs" />}</CourseStack.Screen></CourseStackView>;
 }
 
 function TestNavigator() {

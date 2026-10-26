@@ -21,13 +21,14 @@ export function AppScreen({ children, style }: { children: ReactNode; style?: Vi
 export function AppButton({ title, onPress, loading = false, disabled = false, variant = 'primary' }: {
   title: string; onPress: () => void; loading?: boolean; disabled?: boolean; variant?: 'primary' | 'secondary' | 'danger';
 }) {
-  return <Pressable accessibilityRole="button" onPress={onPress} disabled={loading || disabled} style={[styles.button, styles[`button_${variant}`], (loading || disabled) && styles.disabled]}>
+  const variantStyle = variant === 'secondary' ? styles.button_secondary : variant === 'danger' ? styles.button_danger : styles.button_primary;
+  return <Pressable accessibilityRole="button" onPress={onPress} disabled={loading || disabled} style={[styles.button, variantStyle, (loading || disabled) && styles.disabled]}>
     {loading ? <ActivityIndicator color={variant === 'secondary' ? palette.green : '#fff'} /> : <Text style={[styles.buttonText, variant === 'secondary' && styles.secondaryText]}>{title}</Text>}
   </Pressable>;
 }
 
 export function AppInput({ label, error, style, ...props }: TextInputProps & { label: string; error?: string }) {
-  return <View style={styles.field}><Text style={styles.label}>{label}</Text><TextInput {...props} placeholderTextColor="#89958d" style={[styles.input, style]} />{error ? <Text style={styles.error}>{error}</Text> : null}</View>;
+  return <View style={styles.field}><Text style={styles.label}>{label}</Text><TextInput {...props} placeholderTextColor="#89958d" style={[styles.input, style]} />{error ? <Text style={[styles.feedback, styles.feedback_error]}>{error}</Text> : null}</View>;
 }
 
 export function Card({ children, style }: { children: ReactNode; style?: ViewStyle }) {
