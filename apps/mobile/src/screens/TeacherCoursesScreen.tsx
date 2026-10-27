@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 import { AppButton, AppInput, Card, EmptyState, Feedback, palette, ScreenTitle } from '../components/ui';
 import { api } from '../lib/api';
 import type { Session } from '../lib/session';
@@ -29,7 +29,8 @@ export default function TeacherCoursesScreen({ role = 'teacher' }: { role?: Sess
   const [notice, setNotice] = useState('');
 
   const loadCourses = useCallback(async (pull = false) => {
-    pull ? setRefreshing(true) : setLoading(true);
+    if (pull) setRefreshing(true);
+    else setLoading(true);
     try { setCourses(await api<Course[]>('/courses/mine')); }
     catch (err) { setError(err instanceof Error ? err.message : 'Kurslaringizni yuklab bo‘lmadi.'); }
     finally { setLoading(false); setRefreshing(false); }

@@ -28,7 +28,7 @@ export default function TestTakeScreen({ route }: Props) {
     return () => { active = false; };
   }, [id]);
 
-  const questions = test?.questions || [];
+  const questions = useMemo(() => test?.questions || [], [test?.questions]);
   const question = questions[activeIndex];
   const answered = useMemo(() => questions.filter((item) => answers[String(item.number)]).length, [questions, answers]);
   const currentResult = result?.results.find((item) => item.number === question?.number);

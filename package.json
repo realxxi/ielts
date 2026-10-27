@@ -7,6 +7,8 @@
     "dev:api": "npm --workspace @tilshunos/api run start:dev",
     "dev:web": "npm --workspace @tilshunos/web run dev",
     "dev:mobile": "npm --workspace @tilshunos/mobile run start",
+    "typecheck:mobile": "npm --workspace @tilshunos/mobile run typecheck",
+    "lint:mobile": "npm --workspace @tilshunos/mobile run lint",
     "build": "npm run build --workspace @tilshunos/api && npm run build --workspace @tilshunos/web"
   },
   "dependencies": {

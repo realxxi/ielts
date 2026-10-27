@@ -16,7 +16,8 @@ export default function HomeScreen({ navigation, session }: Props) {
   const [error, setError] = useState('');
 
   const loadContent = useCallback(async (pull = false) => {
-    pull ? setRefreshing(true) : setLoading(true);
+    if (pull) setRefreshing(true);
+    else setLoading(true);
     setError('');
     const results = await Promise.allSettled([api<Course[]>('/courses'), api<Test[]>('/tests')]);
     if (results[0].status === 'fulfilled') setCourses(results[0].value);

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from 'expo-file-system';
 import { AppButton, AppScreen, Card, EmptyState, Feedback, palette, ScreenTitle } from '../components/ui';
 import { api } from '../lib/api';
 import type { AdminUser, Course, CourseAccessRequest, Test } from '../types';

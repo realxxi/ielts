@@ -1,5 +1,5 @@
 import { ComponentType, useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -31,10 +31,6 @@ const GuestTabsNavigatorView = GuestTabs.Navigator as unknown as ComponentType<a
 const NavigationRoot = NavigationContainer as unknown as ComponentType<any>;
 const CourseStackView = CourseStack.Navigator as unknown as ComponentType<any>;
 const TestStackView = TestStack.Navigator as unknown as ComponentType<any>;
-
-function Placeholder({ title }: { title: string }) {
-  return <View style={styles.screen}><Text style={styles.title}>{title}</Text><Text style={styles.copy}>Bu bo‘lim keyingi bosqichlarda tayyorlanadi.</Text></View>;
-}
 
 function AuthNavigator({ onAuthenticated }: { onAuthenticated: (session: Session) => void }) {
   return <AuthNavigatorView screenOptions={{ headerShown: false }}>
@@ -94,4 +90,4 @@ export default function App() {
   </NavigationRoot></SafeAreaProvider>;
 }
 
-const styles = StyleSheet.create({ loading: { flex: 1, justifyContent: 'center', alignItems: 'center' }, screen: { flex: 1, padding: 24, justifyContent: 'center', backgroundColor: '#f3f7f2' }, title: { color: '#18392a', fontSize: 26, fontWeight: '700' }, copy: { color: '#4a5c52', marginTop: 8, fontSize: 15 } });
+const styles = StyleSheet.create({ loading: { flex: 1, justifyContent: 'center', alignItems: 'center' } });

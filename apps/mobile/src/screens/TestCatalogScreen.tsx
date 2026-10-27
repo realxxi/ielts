@@ -14,7 +14,8 @@ export default function TestCatalogScreen({ navigation }: Props) {
   const [error, setError] = useState('');
 
   const loadTests = useCallback(async (pull = false) => {
-    pull ? setRefreshing(true) : setLoading(true);
+    if (pull) setRefreshing(true);
+    else setLoading(true);
     setError('');
     try {
       setTests(await api<Test[]>('/tests'));

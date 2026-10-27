@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import { api } from '../lib/api';
 import { saveSession, type Session, type UserRole } from '../lib/session';
 
@@ -21,11 +23,45 @@ type RegisterProps = NativeStackScreenProps<AuthRoutes, 'Register'> & { onAuthen
 type SessionResponse = Session;
 type RegisterResponse = { verificationRequired: true; email: string; purpose: 'register' | 'login' };
 
+WebBrowser.maybeCompleteAuthSession();
+
+async function authenticateWithTelegram(role: Extract<UserRole, 'student' | 'teacher'>): Promise<Session> {
+  const webUrl = (process.env.EXPO_PUBLIC_WEB_URL || '').trim().replace(/\/+$/, '');
+  if (!webUrl) throw new Error('Telegram orqali kirish uchun EXPO_PUBLIC_WEB_URL manzilini sozlang.');
+  const returnUrl = Linking.createURL('telegram-auth');
+  const authUrl = `${webUrl}/mobile-telegram?${new URLSearchParams({ role, returnTo: returnUrl }).toString()}`;
+  const result = await WebBrowser.openAuthSessionAsync(authUrl, returnUrl);
+  if (result.type === 'cancel' || result.type === 'dismiss') throw new Error('Telegram orqali kirish bekor qilindi.');
+  if (result.type !== 'success' || !result.url) throw new Error('Telegramdan ilovaga qaytishda xatolik yuz berdi.');
+  let payload: string | null;
+  try { payload = new URL(result.url).searchParams.get('payload'); }
+  catch { throw new Error('Telegramdan kelgan qaytish havolasi noto‘g‘ri. Qayta urinib ko‘ring.'); }
+  if (!payload) throw new Error('Telegram tasdiqlash ma’lumoti olinmadi. Qayta urinib ko‘ring.');
+  let telegramUser: Record<string, unknown>;
+  try { telegramUser = JSON.parse(payload) as Record<string, unknown>; }
+  catch { throw new Error('Telegram tasdiqlash ma’lumotini o‘qib bo‘lmadi. Qayta urinib ko‘ring.'); }
+  const session = await api<SessionResponse>('/auth/telegram', {
+    method: 'POST',
+    body: JSON.stringify({ ...telegramUser, role }),
+  });
+  await saveSession(session);
+  return session;
+}
+
 export function LoginScreen({ navigation, onAuthenticated }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<Extract<UserRole, 'student' | 'teacher'>>('student');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
+  async function telegramLogin() {
+    setBusy(true);
+    setError('');
+    try { onAuthenticated(await authenticateWithTelegram(role)); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Telegram orqali kirib bo‘lmadi.'); }
+    finally { setBusy(false); }
+  }
 
   async function submit() {
     setBusy(true);
@@ -45,6 +81,13 @@ export function LoginScreen({ navigation, onAuthenticated }: LoginProps) {
   }
 
   return <AuthFrame eyebrow="XUSH KELIBSIZ" title="Hisobingizga kiring." description="O‘rganishni davom ettirish uchun email va parolingizni kiriting.">
+    <Text style={styles.fieldLabel}>Telegram orqali yangi hisob ochish uchun rol</Text>
+    <View style={styles.rolePicker}>
+      <RoleChoice title="O‘quvchi" detail="Kurslarni o‘rganaman" selected={role === 'student'} onPress={() => setRole('student')} />
+      <RoleChoice title="O‘qituvchi" detail="Kurs yarataman" selected={role === 'teacher'} onPress={() => setRole('teacher')} />
+    </View>
+    <PrimaryButton title="Telegram orqali kirish" busy={busy} onPress={telegramLogin} />
+    <Text style={styles.divider}>yoki email bilan</Text>
     <Field label="Email" value={email} onChangeText={setEmail} placeholder="siz@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
     <Field label="Parol" value={password} onChangeText={setPassword} placeholder="Parolingiz" secureTextEntry autoComplete="current-password" />
     <ErrorText>{error}</ErrorText>
@@ -64,6 +107,14 @@ export function RegisterScreen({ navigation, onAuthenticated }: RegisterProps) {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+
+  async function telegramRegister() {
+    setBusy(true);
+    setError('');
+    try { onAuthenticated(await authenticateWithTelegram(role)); }
+    catch (err) { setError(err instanceof Error ? err.message : 'Telegram orqali ro‘yxatdan o‘tib bo‘lmadi.'); }
+    finally { setBusy(false); }
+  }
 
   async function requestCode() {
     setBusy(true);
@@ -144,6 +195,8 @@ export function RegisterScreen({ navigation, onAuthenticated }: RegisterProps) {
       <RoleChoice title="O‘quvchi" detail="Kurslarni o‘rganaman" selected={role === 'student'} onPress={() => setRole('student')} />
       <RoleChoice title="O‘qituvchi" detail="Kurs yarataman" selected={role === 'teacher'} onPress={() => setRole('teacher')} />
     </View>
+    <PrimaryButton title="Telegram orqali ro‘yxatdan o‘tish" busy={busy} onPress={telegramRegister} />
+    <Text style={styles.divider}>yoki email bilan</Text>
     <Field label="Ism va familiya" value={name} onChangeText={setName} placeholder="Ismingiz" autoCapitalize="words" autoComplete="name" />
     <Field label="Email" value={email} onChangeText={setEmail} placeholder="siz@example.com" keyboardType="email-address" autoCapitalize="none" autoComplete="email" />
     <Field label="Parol" value={password} onChangeText={setPassword} placeholder="Kamida 8 belgi" secureTextEntry autoComplete="new-password" />
@@ -215,5 +268,6 @@ const styles = StyleSheet.create({
   footerRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 19, flexWrap: 'wrap' },
   muted: { color: '#68766d', fontSize: 14 },
   link: { color: '#1b6d48', fontSize: 14, fontWeight: '700' },
+  divider: { color: '#78857d', textAlign: 'center', fontSize: 13, marginVertical: 14 },
   secondaryAction: { alignSelf: 'center', paddingVertical: 12, paddingHorizontal: 8 },
 });

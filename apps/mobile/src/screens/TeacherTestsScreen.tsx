@@ -21,7 +21,8 @@ export default function TeacherTestsScreen() {
   const [notice, setNotice] = useState('');
 
   const loadTests = useCallback(async (pull = false) => {
-    pull ? setRefreshing(true) : setLoading(true);
+    if (pull) setRefreshing(true);
+    else setLoading(true);
     try { setTests(await api<Test[]>('/tests/mine')); }
     catch (err) { setError(err instanceof Error ? err.message : 'Testlaringizni yuklab bo‘lmadi.'); }
     finally { setLoading(false); setRefreshing(false); }

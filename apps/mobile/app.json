@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Tilshunos",
+    "slug": "tilshunos",
+    "scheme": "tilshunos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f3f7f2"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "uz.tilshunos.mobile"
+    },
+    "android": {
+      "package": "uz.tilshunos.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1b6d48"
+      }
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-document-picker"
+    ]
+  }
+}
